@@ -1,14 +1,23 @@
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import set_access_cookies, create_access_token
+from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token
+
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
+load_dotenv()
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +58,7 @@ def register():
     username = new_data.get("username")
     password = new_data.get("password")
 
-    if not username and not password:
+    if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
     if User.query.filter_by(username = username).first():
         return jsonify({"error": "User already exists"}), 400
@@ -74,7 +83,7 @@ def login():
 
     response = jsonify({"message" : "Login successful"})
     set_access_cookies(response, access_token)
-    return response
+    return response, 200
 
 if __name__ == '__main__':
     app.run(debug = True, port = 5000)
