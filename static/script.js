@@ -74,88 +74,88 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function renderCalendar() {
-    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    const prevLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+        const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        const prevLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
 
-    const firstDayIndex = firstDay.getDay();
-    const lastDayIndex = lastDay.getDay();
-    const nextDays = 7 - lastDayIndex - 1;
+        const firstDayIndex = firstDay.getDay();
+        const lastDayIndex = lastDay.getDay();
+        const nextDays = 7 - lastDayIndex - 1;
 
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
 
-    monthYearEl.innerHTML = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        monthYearEl.innerHTML = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
 
-    let daysHtml = "";
+        let daysHtml = "";
 
-    // 1. Previous month days (empty slots)
-    for (let x = firstDayIndex; x > 0; x--) {
-        const prevDate = prevLastDay.getDate() - x + 1;
-        daysHtml += `<div class="day other-month">${prevDate}</div>`;
-    }
-
-    // 2. Current month days
-    for (let i = 1; i <= lastDay.getDate(); i++) {
-        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
-        const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
-        const dayEvents = events[dateKey] || []; // Get events for this day
-
-        let dayClass = 'day';
-
-        // Check if day is today
-        if (date.toDateString() === new Date().toDateString()) {
-            dayClass += ' today';
+        // 1. Previous month days (empty slots)
+        for (let x = firstDayIndex; x > 0; x--) {
+            const prevDate = prevLastDay.getDate() - x + 1;
+            daysHtml += `<div class="day other-month">${prevDate}</div>`;
         }
 
-        // Check if day is selected
-        if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-            dayClass += ' selected';
+        // 2. Current month days
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+            const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
+            const dayEvents = events[dateKey] || []; // Get events for this day
+
+            let dayClass = 'day';
+
+            // Check if day is today
+            if (date.toDateString() === new Date().toDateString()) {
+                dayClass += ' today';
+            }
+
+            // Check if day is selected
+            if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+                dayClass += ' selected';
+            }
+
+            // Check if day has any events at all
+            if (dayEvents.length > 0) {
+                dayClass += ' has-events';
+            }
+
+            // --- THE DOT LOGIC ---
+            // Create the container and loop through each event to add its specific color dot
+            let dotsHtml = '<div class="event-dots-container">';
+            dayEvents.forEach(e => {
+                // This applies 'tournament', 'gg-red', etc., to the dots on the left
+                dotsHtml += `<div class="dot ${e.color || ''}"></div>`;
+            });
+            dotsHtml += '</div>';
+
+            daysHtml += `<div class="${dayClass}" data-date="${dateKey}">
+                            ${i}
+                            ${dotsHtml}
+                        </div>`;
         }
 
-        // Check if day has any events at all
-        if (dayEvents.length > 0) {
-            dayClass += ' has-events';
+        // 3. Next month days (empty slots)
+        for (let j = 1; j <= nextDays; j++) {
+            daysHtml += `<div class="day other-month">${j}</div>`;
         }
 
-        // --- THE DOT LOGIC ---
-        // Create the container and loop through each event to add its specific color dot
-        let dotsHtml = '<div class="event-dots-container">';
-        dayEvents.forEach(e => {
-            // This applies 'tournament', 'gg-red', etc., to the dots on the left
-            dotsHtml += `<div class="dot ${e.color || ''}"></div>`;
+        daysEl.innerHTML = daysHtml;
+
+        // 4. Re-attach click events to the new day elements
+        document.querySelectorAll('.day:not(.other-month)').forEach(day => {
+            day.addEventListener('click', () => {
+                const dateStr = day.getAttribute('data-date');
+                const [year, month, dayNum] = dateStr.split('-').map(Number);
+                selectedDate = new Date(year, month - 1, dayNum);
+                
+                // Re-render so the 'selected' class moves to the right day
+                renderCalendar(); 
+                // Update the panel on the right
+                showEvents(dateStr); 
+            });
         });
-        dotsHtml += '</div>';
-
-        daysHtml += `<div class="${dayClass}" data-date="${dateKey}">
-                        ${i}
-                        ${dotsHtml}
-                     </div>`;
     }
-
-    // 3. Next month days (empty slots)
-    for (let j = 1; j <= nextDays; j++) {
-        daysHtml += `<div class="day other-month">${j}</div>`;
-    }
-
-    daysEl.innerHTML = daysHtml;
-
-    // 4. Re-attach click events to the new day elements
-    document.querySelectorAll('.day:not(.other-month)').forEach(day => {
-        day.addEventListener('click', () => {
-            const dateStr = day.getAttribute('data-date');
-            const [year, month, dayNum] = dateStr.split('-').map(Number);
-            selectedDate = new Date(year, month - 1, dayNum);
-            
-            // Re-render so the 'selected' class moves to the right day
-            renderCalendar(); 
-            // Update the panel on the right
-            showEvents(dateStr); 
-        });
-    });
-}
 
     function showEvents(dateStr) {
         const [year, month, day] = dateStr.split('-').map(Number);
