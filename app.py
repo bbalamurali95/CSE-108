@@ -23,6 +23,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     hash = db.Column(db.String, nullable=False)
+    gg_wins = db.Column(db.Integer, default=0, nullable=False)
+    sf6_wins = db.Column(db.Integer, default=0, nullable=False)
+    t8_wins = db.Column(db.Integer, default=0, nullable=False)
 
 @app.route("/")
 def index():
@@ -52,6 +55,10 @@ def tournament_page():
 def leaderboard_page():
     return render_template("leaderboard.html")
 
+@app.route("/t_register")
+def t_register():
+    return render_template("register.html")
+
 @app.route("/register", methods=['POST'])
 def register():
     new_data = request.get_json()
@@ -66,7 +73,7 @@ def register():
     hashed_pw  = bcrypt.generate_password_hash(
         password
     ).decode("utf-8")
-    user = User(username = username, hash = hashed_pw)
+    user = User(username = username, hash = hashed_pw);
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": f"User {username} created successfully"}), 201
