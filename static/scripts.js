@@ -47,7 +47,7 @@ function loadLeaderboard() {
 
         if (i == 0) {
             row.className = "top-player";
-            crown = '<img src="img/crown.png" class="crown-icon" alt="crown">';
+            crown = '<img src="static/crown.png" class="crown-icon" alt="crown">';
         }
 
         row.innerHTML = `
