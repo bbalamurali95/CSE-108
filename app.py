@@ -13,6 +13,8 @@ class User(db.Model):
     username = db.Column(db.String, unique=True, nullable=False)
     hash = db.Column(db.String, nullable=False)
 
+
+
 @app.route('/')
 def index():
     return render_template("home.html")
@@ -22,4 +24,5 @@ bcrypt = Bcrypt(app)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        db.session.commit()
     app.run(debug=True)
