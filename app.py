@@ -3,12 +3,12 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
 
-# load_dotenv()
+load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
@@ -51,6 +51,10 @@ def tournament_page():
 @app.route("/leaderboard")
 def leaderboard_page():
     return render_template("leaderboard.html")
+
+@app.route("/t_register")
+def t_register():
+    return render_template("register.html")
 
 @app.route("/register", methods=['POST'])
 def register():
