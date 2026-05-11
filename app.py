@@ -1,6 +1,7 @@
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import set_access_cookies, create_access_token
 
 app = Flask(__name__)
 
@@ -37,3 +38,18 @@ def register():
         return jsonify({"message" : f"User {username} created successfully"}), 201
     else:
         return jsonify({"error" : "Missing username or password"}), 400
+    
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter_by(username = data.get("username")).first()
+
+    if not user or bcrypt.check_password_hash(user.hash, data.get("password")) == False:
+        return jsonify({"error" : "Invalid username or password"}), 401
+    
+    access_token = create_access_token(identity = user.id)
+
+    response = jsonify({"message" : "Login successful"})
+    set_access_cookies(response, access_token)
+    return response
+
