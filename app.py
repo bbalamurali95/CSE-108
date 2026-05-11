@@ -5,6 +5,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template("frontpage.html")
+    return render_template("home.html")
 
 bcrypt = Bcrypt(app)
