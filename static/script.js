@@ -1,5 +1,6 @@
-function createUser() {
-    console.log("We're gonna make a user");
+function createUser(event) {
+    event.preventDefault();
+
     const xhttp = new XMLHttpRequest();
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
@@ -10,6 +11,11 @@ function createUser() {
     xhttp.onload = function() {
         const data = JSON.parse(this.responseText);
         console.log(data);
+
+        if (this.status === 201) {
+            document.getElementById("signupForm").reset();
+            window.location.href = "/login";
+        }
     }
 }
 
