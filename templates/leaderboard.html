@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body onload="loadLeaderboard()">
+    <nav>
+        <h2>Fighting Game Club</h2>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="leaderboard.html">Leaderboard</a>
+            <a href="tournaments.html">Tournaments</a>
+            <a href="calendar.html">Calendar</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="leaderboard-hero">
+            <div>
+                <h1>Club Leaderboards</h1>
+                <p>Track the top players in Street Fighter, Tekken, and Guilty Gear tournaments.</p>
+            </div>
+
+            <div class="leaderboard-stats">
+                <div class="stat-card">
+                    <h2>24</h2>
+                    <p>Registered Players</p>
+                </div>
+                <div class="stat-card">
+                    <h2>52</h2>
+                    <p>Total Tournaments</p>
+                </div>
+                <div class="stat-card">
+                    <h2>3</h2>
+                    <p>Main Games</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="leaderboard-section">
+            <div class="leaderboard-controls">
+                <label for="gameSelect">Select Leaderboard:</label>
+                <select id="gameSelect" onchange="loadLeaderboard()">
+                    <option value="Overall">Overall</option>
+                    <option value="Street Fighter">Street Fighter</option>
+                    <option value="Tekken">Tekken</option>
+                    <option value="Guilty Gear">Guilty Gear</option>
+                </select>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Main Game</th>
+                        <th>Tournament Wins</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="static/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tournaments</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body onload="showBracket('street')">
+    <nav>
+        <h2>Fighting Game Club</h2>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="leaderboard.html">Leaderboard</a>
+            <a href="tournaments.html">Tournaments</a>
+            <a href="calendar.html">Calendar</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="signup-banner">
+            <div>
+                <h1>Join the Next Tournament</h1>
+                <p>Sign up for upcoming Street Fighter, Tekken, and Guilty Gear events.</p>
+            </div>
+            <a class="signup-big-button" href="signup.html">Tournament Sign Up</a>
+        </section>
+
+        <section class="tournament-section">
+            <h1>Tournament Brackets</h1>
+            <p>Select a game to view the tournament bracket.</p>
+
+            <div class="button-row">
+                <button onclick="showBracket('street')">Street Fighter</button>
+                <button onclick="showBracket('tekken')">Tekken</button>
+                <button onclick="showBracket('guilty')">Guilty Gear</button>
+            </div>
+
+            <section id="bracketArea" class="bracket-area"></section>
+        </section>
+    </main>
+
+    <script src="static/scripts.js"></script>
+</body>
+</html>
