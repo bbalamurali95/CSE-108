@@ -44,7 +44,19 @@ function handleLogin(event) {
             alert(this.responseText);
         }
     }
+}
+function handleLogout(event) {
+    event.preventDefault();
 
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/logout", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send();
+    xhttp.onload = function() {
+        if (this.status === 200) {
+            window.location.href = "/";
+        }
+    }
     
 }
 
