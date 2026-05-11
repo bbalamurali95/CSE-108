@@ -53,3 +53,4 @@ def login():
     set_access_cookies(response, access_token)
     return response
 
+app.run(debug=True)
