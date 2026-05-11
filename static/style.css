@@ -1,0 +1,166 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(150deg, #6049f3, #542454);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.hero{
+    width: 100%;
+    min-height: 100vh;
+    background-image: url(images/back-image.png);
+    background-position: center;
+    background-size: cover;
+    padding: 10px 10%;
+    overflow: hidden;
+}
+
+.navbar {
+    position: -webkit-sticky; /* Support for Safari */
+    position: sticky;
+    top: 0;
+    width: 100%;             /* Make it the full width of the page */
+    z-index: 1000;           /* Keep it on top of videos/content */
+    background-color: hsl(0, 0%, 25%); /* Your gray color */
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    align-items: center;      /* Vertically center logo and links */
+    justify-content: flex-start; /* Keeps them in a row starting from left */
+    padding: 0 5%;            /* Padding on the sides so it's not touching edges */
+    margin: 0;
+}
+
+.logo {
+    width: 120px;
+    margin-right: 40px;       /* Pushes the links away from the logo */
+}
+
+.navbar li a {
+    color: white;
+    text-decoration: none;
+    padding: 20px 15px;       /* Adjusts height and clickable area */
+    display: block;
+    transition: 0.3s;
+}
+
+.navbar li a:hover {
+    background-color: hsl(0, 0%, 10%);
+}
+
+
+.navbar li:nth-child(7) { 
+    margin-left: auto; 
+}
+
+.logo {
+    width: 140px;
+}
+
+.login-btn {
+    text-decoration: none;
+    color: #fff;
+    margin-right: 15px;
+    font-weight: 400;
+}
+
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 14px 40px;
+    color: #fff;
+    background-image: linear-gradient(45deg, #df4881, #c430d7);
+    font-size: 14px;
+    border-radius: 30px;
+    border-top-right-radius: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+.back-video{
+
+
+    z-index: -1;
+  top: 0;
+  left: 0;
+ 
+}
+
+@media (min-aspect-ration: 16/9){
+    .back-video{
+        width: 100%;
+        height: auto;
+   
+    }
+}
+
+@media (max-aspect-ration: 16/9){
+    .back-video{
+        width: auto;
+        height: 100%;
+ 
+    }
+}
+
+
+/* This sets up the side-by-side look */
+.game {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* Split screen 50/50 */
+    background: #0a0c1a;
+    margin: 40px 0;
+    align-items: center;
+}
+
+/* The Angled Header */
+.game-header {
+    background: #ff0066;
+    padding: 10px 30px;
+    width: fit-content;
+    clip-path: polygon(50% 0, 100% 0, 90% 100%, 0% 100%);
+    color: white;
+}
+
+.sf-orange { background: #ff9900; }
+.gg-red { background: #cc0000; }
+
+.game-textbox {
+    background: #161a2e;
+    color: white;
+    padding: 30px;
+    opacity: 0;
+    transition: 0.5s, visibility 0.5s;
+    transition-delay: 0.5s;
+}
+
+/* Ensures the video fits the box */
+.game-video {
+    height: 500px;
+    border: 2px solid #fcf397;
+    overflow: hidden;
+}
+
+.back-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
