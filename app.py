@@ -23,6 +23,26 @@ def index():
 def home():
     return render_template("home.html")
 
+@app.route("/login.html")
+def login_page():
+    return render_template("login.html")
+
+@app.route("/signup.html")
+def signup_page():
+    return render_template("signup.html")
+
+@app.route("/calendar.html")
+def calendar_page():
+    return render_template("calendar.html")
+
+@app.route("/chat.html")
+def chat_page():
+    return render_template("chat.html")
+
+@app.route("/tournament.html")
+def tournament_page():
+    return render_template("tournament.html")
+
 @app.route("/register", methods=['POST'])
 def register():
     new_data = request.get_json()
