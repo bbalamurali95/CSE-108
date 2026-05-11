@@ -37,7 +37,6 @@ function handleLogin(event) {
         console.log("Status: ", this.status);
         //console.log("Responsse: ", this.data);
 
-
         if (this.status === 200) {
             window.location.href = "/";
         } else {
@@ -45,19 +44,21 @@ function handleLogin(event) {
         }
     }
 }
-function handleLogout(event) {
+
+function createTournament(event) {
     event.preventDefault();
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "/logout", true);
-    xhttp.setRequestHeader("Content-Type", "application/json");
-    xhttp.send();
+    const tourneyName = document.getElementById("tourneyNameBox").value
+    const tourneyUrl = document.getElementById("tourneyUrlBox").value
+    const body = {"name": tourneyName, "url": tourneyUrl};
+    xhttp.open("POST", "/create_tournament", true);
+    xhttp.sendRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(body));
     xhttp.onload = function() {
-        if (this.status === 200) {
-            window.location.href = "/";
-        }
+        if (this.status === 201) window.location.reload();
+        else console.error("Failed to create tournament");
     }
-    
 }
 
 document.addEventListener('DOMContentLoaded', function () {
