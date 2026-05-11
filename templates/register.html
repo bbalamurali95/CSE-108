@@ -6,14 +6,19 @@
 </head>
 <body>
     <nav>
-        <h2>Fighting Game Club</h2>
-        <div class="nav-links">
-            <a href="{{url_for('index')}}">Home</a>
-            <a href="{{url_for('leaderboard_page')}}">Leaderboard</a>
-            <a href="{{url_for('tournament_page')}}">Tournaments</a>
-            <a href="{{url_for('calendar_page')}}">Calendar</a>
-        </div>
-    </nav>
+    <div class="logo-container"> 
+        <img src="/static/stick_thing.webp" class="logo" alt="Logo">
+        <h2 class="nav-title">Fighting Game Club</h2>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="{{url_for('index')}}">Home</a></li>
+        <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+        <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+        <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+        <li><a href="{{url_for('login_page')}}">Login</a></li>
+    </ul>
+</nav>
 
     <main>
         <section class="signup-page-card">
