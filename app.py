@@ -49,19 +49,18 @@ def register():
     username = new_data.get("username")
     password = new_data.get("password")
 
+    if not username and not password:
+        return jsonify({"error": "Missing username or password"}), 400
+    if User.query.filter_by(username = username).first():
+        return jsonify({"error": "User already exists"}), 400
+
     hashed_pw  = bcrypt.generate_password_hash(
         password
     ).decode("utf-8")
-
-    if User.query.filter_by(username = username).first():
-        if username and password:
-            return jsonify({"error" : "User already exists"}), 400
-        user = User(username = username, hash = hashed_pw)
-        db.session.add(user)
-        db.session.commit()
-        return jsonify({"message" : f"User {username} created successfully"}), 201
-    else:
-        return jsonify({"error" : "Missing username or password"}), 400
+    user = User(username = username, hash = hashed_pw)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"message": f"User {username} created successfully"}), 201
     
 @app.route("/login", methods=['POST'])
 def login():
