@@ -10,13 +10,13 @@
     <nav class="navbar">
         <ul>
             <img src="logo.png" class="logo">
-            <li><a href="home.html">Home</a></li>
-            <li><a href="calendar.html">Calendar</a></li>
-            <li><a href="tournament.html">Tournaments</a></li>
-            <li><a href="leaderboard.html">Leaderboard</a></li>
-            <li><a href="chat.html">Chat</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="signup.html">Sign up</a></li>
+            <li><a href="{{url_for('index')}}">Home</a></li>
+            <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+            <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+            <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+            <li><a href="{{url_for('chat_page')}}">Chat</a></li>
+            <li><a href="{{url_for('login_page')}}">Login</a></li>
+            <li><a href="{{url_for('signup_page')}}">Sign up</a></li>
         </ul>
     </nav>
 

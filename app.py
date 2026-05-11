@@ -19,29 +19,29 @@ class User(db.Model):
 def index():
     return render_template("home.html")
 
-@app.route("/home.html")
-def home():
-    return render_template("home.html")
-
-@app.route("/login.html")
+@app.route("/login")
 def login_page():
     return render_template("login.html")
 
-@app.route("/signup.html")
+@app.route("/signup")
 def signup_page():
     return render_template("signup.html")
 
-@app.route("/calendar.html")
+@app.route("/calendar")
 def calendar_page():
     return render_template("calendar.html")
 
-@app.route("/chat.html")
+@app.route("/chat")
 def chat_page():
     return render_template("chat.html")
 
-@app.route("/tournament.html")
+@app.route("/tournament")
 def tournament_page():
     return render_template("tournament.html")
+
+@app.route("/leaderboard")
+def leaderboard_page():
+    return render_template("leaderboard.html")
 
 @app.route("/register", methods=['POST'])
 def register():
