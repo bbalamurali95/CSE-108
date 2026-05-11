@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tournament Sign Up</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <nav>
+        <h2>Fighting Game Club</h2>
+        <div class="nav-links">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('leaderboard_page')}}">Leaderboard</a>
+            <a href="{{url_for('tournaments_page')}}">Tournaments</a>
+            <a href="{{url_for('calendar_page')}}">Calendar</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="signup-page-card">
+            <h1>Tournament Sign Up</h1>
+            <p>Sign up for an upcoming tournament.</p>
+
+            <form class="signup-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your username">
+
+                <label for="platform">Platform:</label>
+                <select id="platform">
+                    <option>Steam</option>
+                    <option>PlayStation</option>
+                    <option>Xbox</option>
+                </select>
+
+                <label for="game">Game:</label>
+                <select id="game">
+                    <option>Street Fighter</option>
+                    <option>Tekken</option>
+                    <option>Guilty Gear</option>
+                </select>
+
+                <button type="button" onclick="showSignupMessage()">Sign Up</button>
+            </form>
+
+            <p id="signupMessage" class="signup-message"></p>
+        </section>
+    </main>
+
+    <script src="static/scripts.js"></script>
+</body>
+</html>
