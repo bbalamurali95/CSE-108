@@ -37,13 +37,14 @@ def is_logged_in():
 @app.route("/")
 def index():
     try:
-        verify_jwt_in_request()
+        verify_jwt_in_request(optional=True)
         user_id = get_jwt_identity()
-        user = User.query.get(user_id)
-        return render_template("home.html", username = user.username, logged_in=is_logged_in())
+        if user_id:
+            user = User.query.get(user_id)
+            return render_template("home.html", username=user.username, logged_in=True)
     except:
-        user_id = None
-    return render_template("home.html", logged_in=user_id is not None)
+        pass
+    return render_template("home.html", logged_in=False)
 
 @app.route("/login")
 def login_page():
