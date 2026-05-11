@@ -23,6 +23,6 @@ function login() {
     xhttp.send(JSON.stringify(body));
     xhttp.onload = function() {
         const data = JSON.parse(this.responseText);
-        consooe.log(data);
+        console.log(data);
     }
 }
