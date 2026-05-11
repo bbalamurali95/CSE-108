@@ -12,6 +12,18 @@ body{
     background: linear-gradient(150deg, #6049f3, #542454);
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background: #c430d7;
+}
+
+#login-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /*background: url(Guilty.jpg) no-repeat;*/
+    background-color: #161a2e;
+    background-size: cover;
+    background-position: center 80px;
 }
 
 .hero{
@@ -24,34 +36,123 @@ body{
     overflow: hidden;
 }
 
+.wrapper{
+    width: 420px;
+    background: transparent;
+    color: #fff;
+    border-radius: 12px;
+    padding: 30px 40px;
+}
+
+.wrapper h1{
+    font-size: 36px;
+    text-align: center;
+}
+
+.wrapper .input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255,255,255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #fff;
+    padding: 20px 45px 20px 20px;
+}
+
+.wrapper .btn{
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;;
+}
+
+.wrapper .register-link{
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+
+.register-link p a{
+    color: #fff;
+    text-decoration: none;
+    margin-top: 600;
+}
+
+.register-link p a:hover{
+    text-decoration: underline;
+}
+
+.input-box input::placeholder{
+ color: #fff;
+}
+
+.input-box i{
+    position: absolute;
+    right: 20px;
+    top: 30%;
+    transform: translate(-50%);
+    font-size: 20px;
+}
+
 .navbar {
-    position: -webkit-sticky; /* Support for Safari */
-    position: sticky;
+    position: fixed;
     top: 0;
-    width: 100%;             /* Make it the full width of the page */
-    z-index: 1000;           /* Keep it on top of videos/content */
-    background-color: hsl(0, 0%, 25%); /* Your gray color */
+    left: 0;
+    width: 100%; 
+    padding: 10px 5%; 
+    z-index: 1000;   
+    background-color: hsl(0, 0%, 25%); 
 }
 
 .navbar ul {
     list-style-type: none;
     display: flex;
-    align-items: center;      /* Vertically center logo and links */
-    justify-content: flex-start; /* Keeps them in a row starting from left */
-    padding: 0 5%;            /* Padding on the sides so it's not touching edges */
+    align-items: center;     
+    justify-content: flex-start;
+    padding: 0 5%;            
     margin: 0;
 }
 
 .logo {
     width: 120px;
-    margin-right: 40px;       /* Pushes the links away from the logo */
+    margin-right: 40px;     
 }
 
 .navbar li a {
     color: white;
     text-decoration: none;
-    padding: 20px 15px;       /* Adjusts height and clickable area */
-    display: block;
+    padding: 20px 15px;       
     transition: 0.3s;
 }
 

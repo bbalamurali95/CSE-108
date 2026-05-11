@@ -3,13 +3,13 @@
 <head>
  <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
  <title> Fighting Game Club</title> 
- <link rel = "stylesheet" href="style.css">
+ <link rel = "stylesheet" href="/static/style.css">
 </head>
 
 <body>
     <nav class="navbar">
         <ul>
-            <img src="logo.png" class="logo">
+            <img src="/static/logo.png" class="logo">
             <li><a href="{{url_for('index')}}">Home</a></li>
             <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
             <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
@@ -56,7 +56,7 @@
         </div>
         <div class="game-video">
             <video autoplay loop muted playsinline class="back-video">
-              <source src="Street.mp4" type="video/mp4">
+              <source src="/static/street.mp4" type="video/mp4">
             </video>
         </div>
     </section>
