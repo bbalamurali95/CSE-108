@@ -24,7 +24,7 @@ def register():
     username = new_data.get("username")
     password = new_data.get("password")
 
-    hashed_pw  = bcrypt.generate_password_hash(\
+    hashed_pw  = bcrypt.generate_password_hash(
         password
     ).decode("utf-8")
 
