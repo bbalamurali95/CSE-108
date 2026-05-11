@@ -19,6 +19,10 @@ class User(db.Model):
 def index():
     return render_template("home.html")
 
+@app.route("/home.html")
+def home():
+    return render_template("home.html")
+
 @app.route("/register", methods=['POST'])
 def register():
     new_data = request.get_json()
