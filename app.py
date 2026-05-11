@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager, set_access_cookies, create_access_tok
 
 from dotenv import load_dotenv
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -26,6 +27,11 @@ class User(db.Model):
     gg_wins = db.Column(db.Integer, default=0, nullable=False)
     sf6_wins = db.Column(db.Integer, default=0, nullable=False)
     t8_wins = db.Column(db.Integer, default=0, nullable=False)
+
+class Tournament(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    challonge_url = db.Column(db.String, nullable=False)
 
 @app.route("/")
 def index():
@@ -91,6 +97,35 @@ def login():
     response = jsonify({"message" : "Login successful"})
     set_access_cookies(response, access_token)
     return response, 200
+
+@app.route("/create_tournament", methods=['POST'])
+def create_tournament():
+    data = request.get_json()
+    tourney_name = data.get("name")
+    tourney_url = data.get("url")
+
+    api_key = "4b8f7c8d9794364afdeb014adb305c3392cad7a108cc1d44"
+
+    payload = {
+        "api_key" : api_key,
+        "tournament" : {
+            "name" : tourney_name,
+            "tournament_type" : "double elimination",
+            "url" : tourney_url
+        }
+    }
+
+    response = requests.post("http://api.challonge.com/v1/tournaments.json", json=payload)
+
+    if response.status_code == 200:
+        data = response.json()
+        full_url = data['tournament']['full_challonge_url']
+        new_tourney = Tournament(name=tourney_name, challonge_url=full_url)
+        db.session.add(new_tourney)
+        db.session.commit()
+        return jsonify({"message": "Tournament created!", "url": full_url}), 201
+    else:
+        return jsonify({"error": "Failed to create tournament"}), 400
 
 if __name__ == '__main__':
     app.run(debug = True, port = 5000)
