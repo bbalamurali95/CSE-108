@@ -2,6 +2,7 @@ from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token, verify_jwt_in_request, get_jwt_identity, unset_jwt_cookies, jwt_required, get_jwt_identity
+from flask_migrate import Migrate
 
 from dotenv import load_dotenv
 import os
@@ -14,9 +15,16 @@ load_dotenv()
 print("DATABASE_URL:", os.getenv('DATABASE_URL'))
 
 database_url = os.getenv('DATABASE_URL')
-if database_url and database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+# if database_url and database_url.startswith('postgres://'):
+#     database_url = database_url.replace('postgres://', 'postgresql://', 1)
+# app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+if database_url:
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("postgresql://postgres:mpsZZlmhGbpBlaANcxpSImVGHfqPtRuY@postgres.railway.internal:5432/railway")
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
@@ -28,6 +36,8 @@ app.config['JWT_COOKIE_SECURE'] = os.getenv('JWT_COOKIE_SECURE', 'False') == 'Tr
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
