@@ -46,6 +46,7 @@ class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     game = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
     participants = db.relationship('User', secondary=tournament_participants, backref='tournaments')
 
 class Match(db.Model):
@@ -154,7 +155,8 @@ def tournament_page():
 @app.route("/leaderboard")
 def leaderboard_page():
     player_count = User.query.count()
-    return render_template("leaderboard.html", logged_in=is_logged_in(), player_count=player_count)
+    tournament_count = Tournament.query.filter_by(completed=True).count()
+    return render_template("leaderboard.html", logged_in=is_logged_in(), player_count=player_count, tournament_count=tournament_count)
 
 @app.route("/t_register")
 def t_register():
@@ -328,6 +330,8 @@ def report_winner():
             champion.t8_wins += 1
         elif tournament.game == "Street Fighter":
             champion.sf6_wins += 1
+
+        tournament.completed = True 
         
         db.session.commit()
         return jsonify({"message": f"🏆 Tournament Complete! {champion.username} is the Champion!", "tournament_over": True}), 200
