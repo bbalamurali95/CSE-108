@@ -1,20 +1,18 @@
 <!Doctype html>
 <html lang="en">
 <head>
- <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
- <title> Calender</title> 
- <link rel = "stylesheet" href="/static/style.css">
- <link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- <script src="/static/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/static/script.js"></script>
 </head>
-
-<body id = "calender-body">
+<body id="calender-body">
 <nav>
-    <div class="logo-container"> 
+    <div class="logo-container">
         <img src="/static/stick_thing.webp" class="logo" alt="Logo">
         <h2 class="nav-title">Fighting Game Club</h2>
     </div>
-
     <ul class="nav-links">
         <li><a href="{{url_for('index')}}">Home</a></li>
         <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
@@ -27,64 +25,46 @@
         {% endif %}
     </ul>
 </nav>
-    
-      <div class="container">
+<div class="calendar-layout">
+    <img src="/static/Sol_Badguy.png" class="calendar-character left-character" alt="Sol Badguy">
+    <div class="container">
         <div class="calender-container">
             <div class="calendar-header">
                 <div class="nav-buttons">
-                    <button class ="nav-btn" id = "prev-month">
-                         <i class = "fasfa-chevron-left"> </i>
-                    </button>
-                    <button class ="nav-btn" id = "next-month">
-                        <i class = "fasfa-chevron-right"> </i>
-                    </button>
+                    <button class="nav-btn" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <button class="nav-btn" id="next-month"><i class="fas fa-chevron-right"></i></button>
                 </div>
-                <div class ="month-year" id = "month-year">
-                    May 2026
-                </div>
+                <div class="month-year" id="month-year">May 2026</div>
             </div>
-
-            <div class = "weekdays">
-                <div class = "weekday">Sun</div>
-                <div class = "weekday">Mon</div>
-                <div class = "weekday">Tue</div>
-                <div class = "weekday">Wed</div>
-                <div class = "weekday">Thu</div>
-                <div class = "weekday">Fri</div>
-                <div class = "weekday">Sat</div>
+            <div class="weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
             </div>
-
-            <div class ="days" id ="days"></div>
-
-            <div class = "calendar-footer">
-                <button class = "today-btn" id = "today-btn">
-                    <i class = "fasfa-calendar-day"> </i>
-                    Today
-                </button>
-                <div class ="event-indicator">
-                    <i class = "fas fa-circle" style ="color: var(--accent); 
-                    font-size: 0.6 rem;"></i>
+            <div class="days" id="days"></div>
+            <div class="calendar-footer">
+                <button class="today-btn" id="today-btn"><i class="fas fa-calendar-day"></i> Today</button>
+                <div class="event-indicator">
+                    <i class="fas fa-circle"></i>
                     <span> Club meetings</span>
                 </div>
             </div>
-
         </div>
-    
-   
-        <div class = "event-panel" id="event-panel">
-            <div class ="event-header">
-                <div class ="event-date" id="event-date"> Select a date
-                </div>
-                <i class = "fas fasfa-calendar-alt event icon"></i>
-                </div>
-                <div class = "event-list" id = "event-list">
-                    <div class = "no-events"> Select a date with events to view them game-header</div>
-                </div>
+        <div class="event-panel" id="event-panel">
+            <div class="event-header">
+                <div class="event-date" id="event-date">Select a date</div>
+                <i class="fas fa-calendar-alt event-icon"></i>
+            </div>
+            <div class="event-list" id="event-list">
+                <div class="no-events">Select a date with events to view them.</div>
             </div>
         </div>
-        
-        <script src = "/static/script.js"></script>
+    </div>
+    <img src="/static/Yoshimitsu.png" class="calendar-character right-character" alt="Yoshimitsu">
+</div>
 </body>
 </html>
-
-
