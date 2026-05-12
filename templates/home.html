@@ -4,23 +4,26 @@
  <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
  <title> Fighting Game Club</title> 
  <link rel = "stylesheet" href="/static/style.css">
+ <script src="/static/script.js"></script>
 </head>
 
 <body>
- <nav>
-    <div class="logo-container"> 
-        <img src="/static/stick_thing.webp" class="logo" alt="Logo">
-        <h2 class="nav-title">Fighting Game Club</h2>
-    </div>
+    <nav class="navbar">
+        <ul>
+            <img src="/static/logo.png" class="logo">
+            <li><a href="{{url_for('index')}}">Home</a></li>
+            <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+            <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+            <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+            <li><a href="{{url_for('chat_page')}}">Chat</a></li>
+            {% if logged_in %}
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login_page') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 
-    <ul class="nav-links">
-        <li><a href="{{url_for('index')}}">Home</a></li>
-        <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
-        <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
-        <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-        <li><a href="{{url_for('login_page')}}">Login</a></li>
-    </ul>
-</nav>
     <div class="hero">
         <div class="content"> 
             <h1>Hello<br></h1>
