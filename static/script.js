@@ -43,6 +43,21 @@ function handleLogin(event) {
     };
 }
 
+function handleLogout(event) {
+    event.preventDefault();
+
+    const xhttp = new XMLHttpRequest();
+    xhttp.withCredentials = true;
+    xhttp.open("POST", "/logout", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send();
+    xhttp.onload = function() {
+        if (this.status === 200) {
+            window.location.href = "/";
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const monthYearEl = document.getElementById("month-year");
     const daysEl = document.getElementById("days");
