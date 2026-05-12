@@ -1,7 +1,7 @@
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, set_access_cookies, create_access_token, verify_jwt_in_request, get_jwt_identity, unset_jwt_cookies, jwt_required, get_jwt_identity
 
 from dotenv import load_dotenv
 import os
@@ -15,6 +15,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
+app.config['JWT_COOKIE_SECURE'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -27,13 +29,18 @@ class User(db.Model):
     gg_wins = db.Column(db.Integer, default=0, nullable=False)
     sf6_wins = db.Column(db.Integer, default=0, nullable=False)
     t8_wins = db.Column(db.Integer, default=0, nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-tournament_participants = db.Table('tournament_participants',
+tournament_participants = db.Tabletournament_participants = db.Table('tournament_participants',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('tournament_id', db.Integer, db.ForeignKey('tournament.id'), primary_key=True)
 )
 
+def is_logged_in():
+    try:
+        verify_jwt_in_request(optional=True)
+        return get_jwt_identity() is not None
+    except:
+        return False
 class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -80,23 +87,31 @@ def initialize_bracket_slots(tournament_id):
 
 @app.route("/")
 def index():
-    return render_template("home.html")
+    try:
+        verify_jwt_in_request(optional=True)
+        user_id = get_jwt_identity()
+        if user_id:
+            user = User.query.get(int(user_id))  # convert back to int
+            return render_template("home.html", username=user.username, logged_in=True)
+    except Exception as e:
+        print("JWT Error:", e)
+    return render_template("home.html", logged_in=False)
 
 @app.route("/login")
 def login_page():
-    return render_template("login.html")
+    return render_template("login.html", logged_in=is_logged_in())
 
 @app.route("/signup")
 def signup_page():
-    return render_template("signup.html")
+    return render_template("signup.html", logged_in=is_logged_in())
 
 @app.route("/calendar")
 def calendar_page():
-    return render_template("calendar.html")
+    return render_template("calendar.html", logged_in=is_logged_in())
 
 @app.route("/chat")
 def chat_page():
-    return render_template("chat.html")
+    return render_template("chat.html", logged_in=is_logged_in())
 
 @app.route("/tournament")
 @jwt_required(optional=True)
@@ -135,7 +150,7 @@ def tournament_page():
 
 @app.route("/leaderboard")
 def leaderboard_page():
-    return render_template("leaderboard.html")
+    return render_template("leaderboard.html", logged_in=is_logged_in())
 
 @app.route("/t_register")
 def t_register():
@@ -173,6 +188,12 @@ def login():
 
     response = jsonify({"message" : "Login successful"})
     set_access_cookies(response, access_token)
+    return response, 200
+
+@app.route("/logout", methods=['POST'])
+def logout():
+    response = jsonify({"message" : "Logout successful"})
+    unset_jwt_cookies(response)
     return response, 200
 
 @app.route("/create_tournament", methods=['POST'])

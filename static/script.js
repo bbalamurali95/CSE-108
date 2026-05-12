@@ -1,14 +1,15 @@
 function createUser(event) {
     event.preventDefault();
-
     const xhttp = new XMLHttpRequest();
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
 
     const body = {"username": username, "password": password};
+
     xhttp.open("POST", "/register", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
+
     xhttp.onload = function() {
         const data = JSON.parse(this.responseText);
         console.log(data);
@@ -17,26 +18,23 @@ function createUser(event) {
             document.getElementById("signupForm").reset();
             window.location.href = "/login";
         }
-    }
+    };
 }
 
 function handleLogin(event) {
     event.preventDefault();
-
     const xhttp = new XMLHttpRequest();
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
     const body = {"username": username, "password": password};
+
     xhttp.open("POST", "/login", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
-    xhttp.onload = function() {
-        //const data = JSON.parse(this.responseText);
-        //console.log(data);
-        console.log("Raw response:", this.responseText);  // add this
 
+    xhttp.onload = function() {
+        console.log("Raw response:", this.responseText);
         console.log("Status: ", this.status);
-        //console.log("Responsse: ", this.data);
 
         if (this.status === 200) {
             window.location.href = "/";
@@ -178,20 +176,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventDateEl = document.getElementById('event-date');
     const eventListEl = document.getElementById('event-list');
 
-    let currentDate = new Date();
-    let selectedDate = null;
+    if (!monthYearEl || !daysEl || !prevMonthBtn || !nextMonthBtn || !todayBtn || !eventDateEl || !eventListEl) {
+        return;
+    }
 
-    // Sample events data with multiple colors
+    let currentDate = new Date(2026, 4, 1);
+    let selectedDate = new Date(2026, 4, 13);
+
     const events = {
-        '2026-5-1': [{ time: '5:30 PM', text: 'Club Meeting', color: "gg-red" }],
-        '2026-5-8': [{ time: '5:30 PM', text: 'Club Meeting', color: "casual-yellow" }],
-        '2026-5-13': [
-            { time: '4:00 PM', text: 'Tekken 8 Tournament', color: "tournament" },
-          
+        "2026-5-1": [
+            { time: "5:30 PM", text: "Club Meeting", color: "club" }
         ],
-        '2026-5-15': [{ time: '5:30 PM', text: 'Club Meeting', color: "gg-red" }],
-        '2026-5-22': [{ time: '5:30 PM', text: 'Club Meeting', color: "gg-red" }],
-        '2026-5-29': [{ time: '5:30 PM', text: 'Club Meeting', color: "gg-red" }]
+        "2026-5-8": [
+            { time: "5:30 PM", text: "Street Fighter Casuals", color: "street" }
+        ],
+        "2026-5-13": [
+            { time: "4:00 PM", text: "Tekken 8 Tournament", color: "tekken" }
+        ],
+        "2026-5-15": [
+            { time: "5:30 PM", text: "Club Meeting", color: "club" }
+        ],
+        "2026-5-22": [
+            { time: "5:30 PM", text: "Guilty Gear Night", color: "guilty" }
+        ],
+        "2026-5-29": [
+            { time: "5:30 PM", text: "Club Meeting", color: "club" }
+        ]
     };
 
     function renderCalendar() {
@@ -212,116 +222,124 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let daysHtml = "";
 
-        // 1. Previous month days (empty slots)
         for (let x = firstDayIndex; x > 0; x--) {
             const prevDate = prevLastDay.getDate() - x + 1;
             daysHtml += `<div class="day other-month">${prevDate}</div>`;
         }
 
-        // 2. Current month days
         for (let i = 1; i <= lastDay.getDate(); i++) {
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
             const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
-            const dayEvents = events[dateKey] || []; // Get events for this day
+            const dayEvents = events[dateKey] || [];
 
-            let dayClass = 'day';
+            let dayClass = "day";
 
-            // Check if day is today
             if (date.toDateString() === new Date().toDateString()) {
-                dayClass += ' today';
+                dayClass += " today";
             }
 
-            // Check if day is selected
             if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-                dayClass += ' selected';
+                dayClass += " selected";
             }
 
-            // Check if day has any events at all
             if (dayEvents.length > 0) {
-                dayClass += ' has-events';
+                dayClass += " has-events";
             }
 
-            // --- THE DOT LOGIC ---
-            // Create the container and loop through each event to add its specific color dot
-            let dotsHtml = '<div class="event-dots-container">';
-            dayEvents.forEach(e => {
-                // This applies 'tournament', 'gg-red', etc., to the dots on the left
-                dotsHtml += `<div class="dot ${e.color || ''}"></div>`;
-            });
-            dotsHtml += '</div>';
+            let dotsHtml = "";
 
-            daysHtml += `<div class="${dayClass}" data-date="${dateKey}">
-                            ${i}
-                            ${dotsHtml}
-                        </div>`;
+            if (dayEvents.length > 0) {
+                dotsHtml += '<div class="event-dots-container">';
+
+                for (let j = 0; j < dayEvents.length; j++) {
+                    dotsHtml += `<div class="dot ${dayEvents[j].color}"></div>`;
+                }
+
+                dotsHtml += "</div>";
+            }
+
+            daysHtml += `
+                <div class="${dayClass}" data-date="${dateKey}">
+                    ${i}
+                    ${dotsHtml}
+                </div>
+            `;
         }
 
-        // 3. Next month days (empty slots)
         for (let j = 1; j <= nextDays; j++) {
             daysHtml += `<div class="day other-month">${j}</div>`;
         }
 
         daysEl.innerHTML = daysHtml;
 
-        // 4. Re-attach click events to the new day elements
-        document.querySelectorAll('.day:not(.other-month)').forEach(day => {
-            day.addEventListener('click', () => {
-                const dateStr = day.getAttribute('data-date');
-                const [year, month, dayNum] = dateStr.split('-').map(Number);
-                selectedDate = new Date(year, month - 1, dayNum);
-                
-                // Re-render so the 'selected' class moves to the right day
-                renderCalendar(); 
-                // Update the panel on the right
-                showEvents(dateStr); 
+        document.querySelectorAll(".day:not(.other-month)").forEach(function(day) {
+            day.addEventListener("click", function() {
+                const dateStr = day.getAttribute("data-date");
+                const parts = dateStr.split("-").map(Number);
+                selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                renderCalendar();
+                showEvents(dateStr);
             });
         });
     }
 
     function showEvents(dateStr) {
-        const [year, month, day] = dateStr.split('-').map(Number);
-        const dateObj = new Date(year, month - 1, day);
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const parts = dateStr.split("-").map(Number);
+        const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
 
-        eventDateEl.textContent = `${dayNames[dateObj.getDay()]}, ${months[dateObj.getMonth()]} ${day}, ${year}`;
-        eventListEl.innerHTML = '';
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const dayNames = [
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+        ];
+
+        eventDateEl.textContent = `${dayNames[dateObj.getDay()]}, ${months[dateObj.getMonth()]} ${parts[2]}, ${parts[0]}`;
+        eventListEl.innerHTML = "";
 
         const dayEvents = events[dateStr] || [];
 
         if (dayEvents.length > 0) {
-            dayEvents.forEach(event => {
-                const eventItem = document.createElement('div');
-                eventItem.className = 'event-item';
+            for (let i = 0; i < dayEvents.length; i++) {
+                const eventItem = document.createElement("div");
+                eventItem.className = "event-item";
+
                 eventItem.innerHTML = `
-                    <div class="event-color ${event.color || ''}"></div>
-                    <div class="event-time">${event.time}</div>
-                    <div class="event-text">${event.text}</div>
+                    <div class="event-color ${dayEvents[i].color}"></div>
+                    <div class="event-time">${dayEvents[i].time}</div>
+                    <div class="event-text">${dayEvents[i].text}</div>
                 `;
+
                 eventListEl.appendChild(eventItem);
-            });
+            }
         } else {
             eventListEl.innerHTML = '<div class="no-events">No events scheduled for this day</div>';
         }
     }
 
-    prevMonthBtn.addEventListener('click', () => {
+    prevMonthBtn.addEventListener("click", function() {
         currentDate.setMonth(currentDate.getMonth() - 1);
         renderCalendar();
     });
 
-    nextMonthBtn.addEventListener('click', () => {
+    nextMonthBtn.addEventListener("click", function() {
         currentDate.setMonth(currentDate.getMonth() + 1);
         renderCalendar();
     });
 
-    todayBtn.addEventListener('click', () => {
+    todayBtn.addEventListener("click", function() {
         currentDate = new Date();
         selectedDate = new Date();
         renderCalendar();
+
         const dateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
         showEvents(dateStr);
     });
 
     renderCalendar();
+
+    const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+    showEvents(startingDate);
 });
