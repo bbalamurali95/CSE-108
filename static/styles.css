@@ -399,3 +399,28 @@ tr:hover {
 .admin-clickable:hover {
     color: #00ffcc;
 }
+
+/* ================= DYNAMIC 8-MAN CSS MAPPING ================= */
+.eight-man-grid { 
+    grid-template-columns: 180px 180px 180px 180px !important; 
+    min-width: 1000px !important;
+}
+.eight-champ { grid-column: 5; grid-row: 8 / span 2; }
+
+/* Upper 8-Man Layout */
+.u-8-r1-m1 { grid-column: 1; grid-row: 2 / span 2; }
+.u-8-r1-m2 { grid-column: 1; grid-row: 6 / span 2; }
+.u-8-r1-m3 { grid-column: 1; grid-row: 10 / span 2; }
+.u-8-r1-m4 { grid-column: 1; grid-row: 14 / span 2; }
+.u-8-r2-m1 { grid-column: 2; grid-row: 4 / span 2; }
+.u-8-r2-m2 { grid-column: 2; grid-row: 12 / span 2; }
+.u-8-r3-m1 { grid-column: 3; grid-row: 8 / span 2; }
+.u-8-gf { grid-column: 4; grid-row: 8 / span 2; }
+
+/* Lower 8-Man Layout */
+.l-8-r1-m1 { grid-column: 1; grid-row: 2 / span 2; }
+.l-8-r1-m2 { grid-column: 1; grid-row: 6 / span 2; }
+.l-8-r2-m1 { grid-column: 2; grid-row: 2 / span 2; }
+.l-8-r2-m2 { grid-column: 2; grid-row: 6 / span 2; }
+.l-8-r3-m1 { grid-column: 3; grid-row: 4 / span 2; }
+.l-8-r4-m1 { grid-column: 4; grid-row: 4 / span 2; }
