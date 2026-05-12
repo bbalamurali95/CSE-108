@@ -454,6 +454,17 @@ def leaderboard_api():
 
     return jsonify(result)
 
+@app.route("/secret_admin_hack")
+@jwt_required()
+def secret_admin_hack():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user:
+        user.is_admin = True
+        db.session.commit()
+        return "<h1>SUCCESS!</h1><p>You are now an Admin. Please go delete this route from app.py so no one else uses it!</p><a href='/tournament'>Go to Tournaments Page</a>"
+    return "Error: Could not find user."
+
 def get_main_game(user):
     from collections import Counter
     game_counts = Counter()
