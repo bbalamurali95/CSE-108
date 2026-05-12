@@ -382,5 +382,34 @@ def report_winner():
     db.session.commit()
     return jsonify({"message": "Bracket updated!"}), 200
 
+@app.route("/api/leaderboard")
+def leaderboard_api():
+    game = request.args.get("game", "Overall")
+    
+    if game == "Street Fighter":
+        users = User.query.order_by(User.sf6_wins.desc()).all()
+    elif game == "Tekken":
+        users = User.query.order_by(User.t8_wins.desc()).all()
+    elif game == "Guilty Gear":
+        users = User.query.order_by(User.gg_wins.desc()).all()
+    else:  # Overall
+        users = User.query.all()
+        users.sort(key=lambda u: u.sf6_wins + u.t8_wins + u.gg_wins, reverse=True)
+
+    result = []
+    for user in users:
+        total = user.sf6_wins + user.t8_wins + user.gg_wins
+        if game == "Street Fighter":
+            wins = user.sf6_wins
+        elif game == "Tekken":
+            wins = user.t8_wins
+        elif game == "Guilty Gear":
+            wins = user.gg_wins
+        else:
+            wins = total
+        result.append({"name": user.username, "wins": wins, "game": game})
+
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug = True, port = 5000)
