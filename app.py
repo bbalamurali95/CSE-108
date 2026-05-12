@@ -15,9 +15,6 @@ load_dotenv()
 print("DATABASE_URL:", os.getenv('DATABASE_URL'))
 
 database_url = os.getenv('DATABASE_URL')
-# if database_url and database_url.startswith('postgres://'):
-#     database_url = database_url.replace('postgres://', 'postgresql://', 1)
-# app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 if database_url:
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
@@ -37,7 +34,8 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-migrate = Migrate(app, db)
+with app.app_context():
+    db.create_all()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
