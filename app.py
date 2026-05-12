@@ -11,12 +11,12 @@ app = Flask(__name__)
 
 load_dotenv()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("postgresql://postgres:mpsZZlmhGbpBlaANcxpSImVGHfqPtRuY@postgres.railway.internal:5432/railway")
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
-app.config['JWT_COOKIE_SECURE'] = False
+app.config['JWT_COOKIE_SECURE'] = os.getenv('JWT_COOKIE_SECURE', 'False') == 'True'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -31,10 +31,10 @@ class User(db.Model):
     t8_wins = db.Column(db.Integer, default=0, nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-tournament_participants = db.Tabletournament_participants = db.Table('tournament_participants',
+tournament_participants = db.Table("tournament_participants", db.Table('tournament_participants',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('tournament_id', db.Integer, db.ForeignKey('tournament.id'), primary_key=True)
-)
+))
 
 def is_logged_in():
     try:
@@ -92,7 +92,7 @@ def index():
         verify_jwt_in_request(optional=True)
         user_id = get_jwt_identity()
         if user_id:
-            user = User.query.get(int(user_id))
+            user = db.session.get(User, int(user_id))
             return render_template("home.html", username=user.username, logged_in=True)
     except Exception as e:
         print("JWT Error:", e)
