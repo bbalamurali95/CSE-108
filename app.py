@@ -38,10 +38,10 @@ class User(db.Model):
     t8_wins = db.Column(db.Integer, default=0, nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-tournament_participants = db.Table("tournament_participants", db.Table('tournament_participants',
+tournament_participants = db.Table('tournament_participants',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('tournament_id', db.Integer, db.ForeignKey('tournament.id'), primary_key=True)
-))
+)
 
 def is_logged_in():
     try:
