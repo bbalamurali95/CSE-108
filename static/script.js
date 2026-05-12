@@ -209,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
             { time: "7:00 PM", text: "Guilty Gear Night", color: "guilty" }
         ]
     };
+});
 
     function getEventsForDate(dateKey, dateObj) {
         let dayEvents = [];
@@ -372,40 +373,28 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedDate = new Date();
         renderCalendar();
 
-        const dateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-        showEvents(dateStr);
-    });
-
-    renderCalendar();
-
-    const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+        const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
     showEvents(startingDate);
 });
 
+let currentIndex = 0;
 
+function moveSlide(direction) {
+    const slider = document.querySelector('.slider');
+    const slides = document.querySelectorAll('.slide-img');
+    const totalSlides = slides.length;
 
+    currentIndex += direction;
 
-document.addEventListener("DOMContentLoaded", function() {
-    const observerOptions = {
-        threshold: 0.2 
-    };
+    if (currentIndex >= totalSlides) {
+        currentIndex = 0;
+    } else if (currentIndex < 0) {
+        currentIndex = totalSlides - 1;
+    }
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              
-                const textboxes = entry.target.querySelectorAll('.game-header,.game-textbox, .game-description');
-                textboxes.forEach(el => el.classList.add('animate-in'));
-                
-                
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-   
-    const gameSections = document.querySelectorAll('.game');
-    gameSections.forEach(section => {
-        observer.observe(section);
+    const slideWidth = slider.clientWidth;
+    slider.scrollTo({
+        left: slideWidth * currentIndex,
+        behavior: 'smooth'
     });
-});
+}
