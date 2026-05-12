@@ -4,7 +4,7 @@
     <title>Tournaments</title>
     <link rel="stylesheet" href="static/styles.css">
 </head>
-<body onload="showBracket('street')">
+<body>
     <nav>
         <div class="logo-container"> 
             <img src="/static/stick_thing.webp" class="logo" alt="Logo">
@@ -29,10 +29,82 @@
             <a class="signup-big-button" href="{{url_for('t_register')}}">Tournament Sign Up</a>
         </section>
 
-        <section class="tournament-section">
+        <section class=\"tournament-section\">
             {% if active_tournament %}
-                <h2>{{ active_tournament.name }} ({{active_tournament.game}})</h2>
-                <iframe src="{{ active_tournament.challonge_url}}/module" width="100%" height="600" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+                <h2>{{ active_tournament.name }} ({{ active_tournament.game }})</h2>
+
+                <div class="bracket-board">
+                    <h3 class="bracket-title">Winners Bracket</h3>
+                    <div class="grid-bracket">
+                        <h4 class="round-label col1-label">Winners R1</h4>
+                        <h4 class="round-label col2-label">Quarter-Finals</h4>
+                        <h4 class="round-label col3-label">Semi-Finals</h4>
+                        <h4 class="round-label col4-label">Winners Final</h4>
+                        <h4 class="round-label col5-label">Grand Final</h4>
+
+                        {% for match in upper_matches %}
+                            <div class="bracket-match {{ match.grid_class }} {% if match.grid_class == 'u-gf' %}grand-match{% endif %}">
+                                <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                    {% if is_admin and match.player1 and not match.winner_id %}
+                                        <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
+                                            {{ match.player1.username }}
+                                        </span>
+                                    {% else %}
+                                        {{ match.player1.username if match.player1 else 'TBD' }}
+                                    {% endif %}
+                                </div>
+                                <div {% if match.winner_id and match.winner_id == match.player2_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                    {% if is_admin and match.player2 and not match.winner_id %}
+                                        <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player2_id }})">
+                                            {{ match.player2.username }}
+                                        </span>
+                                    {% else %}
+                                        {{ match.player2.username if match.player2 else 'TBD' }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="champion-box u-champion">
+                            <span>🏆 TBD</span>
+                        </div>
+                    </div>
+
+                    <div class="lower-bracket-area">
+                        <h3 class="lower-title">Losers Bracket</h3>
+                        <div class="grid-bracket lower-grid">
+                            <h4 class="round-label l-col1-label">Losers R1</h4>
+                            <h4 class="round-label l-col2-label">Losers R2</h4>
+                            <h4 class="round-label l-col3-label">Losers QF</h4>
+                            <h4 class="round-label l-col4-label">Losers SF</h4>
+                            <h4 class="round-label l-col5-label">Losers Final</h4>
+
+                            {% for match in lower_matches %}
+                                <div class="bracket-match lower-match {{ match.grid_class }}">
+                                    <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                        {% if is_admin and match.player1 and not match.winner_id %}
+                                            <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
+                                                {{ match.player1.username }}
+                                            </span>
+                                        {% else %}
+                                            {{ match.player1.username if match.player1 else 'TBD' }}
+                                        {% endif %}
+                                    </div>
+                                    <div {% if match.winner_id and match.winner_id == match.player2_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                        {% if is_admin and match.player2 and not match.winner_id %}
+                                            <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player2_id }})">
+                                                {{ match.player2.username }}
+                                            </span>
+                                        {% else %}
+                                            {{ match.player2.username if match.player2 else 'TBD' }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
             {% else %}
                 <h2>No Active Tournaments</h2>
             {% endif %}
@@ -40,22 +112,28 @@
             {% if is_admin %}
                 <hr style="border-color: #ff003c; margin: 40px 0;">
                 <div class="admin-panel" style="background: rgba(255,0,60,0.1); padding: 20px; border: 2px solid #ff003c; border-radius: 12px;">
-                    <h2 style="color: #ff003c;">Admin Controls: Create Tournament</h2>
+                    <h2 style="color: #ff003c;">Admin Controls: Local Tournament</h2>
+                    
                     <form onsubmit="createTournament(event)">
                         <input type="text" id="tourneyNameBox" placeholder="Name (e.g. Summer Smash)" required>
-                        <input type="text" id="tourneyUrlBox" placeholder="Unique URL (no spaces)" required>
                         <select id="tourneyGameBox" required>
                             <option value="Street Fighter">Street Fighter</option>
                             <option value="Tekken">Tekken</option>
                             <option value="Guilty Gear">Guilty Gear</option>
                         </select>
-                        <button type="submit" style="margin-top: 10px;">Create Bracket</button>
+                        <button type="submit" style="margin-top: 10px;">Create Local Bracket</button>
                     </form>
+
+                    {% if active_tournament %}
+                        <div style="margin-top: 20px;">
+                            <button onclick="startTournament({{ active_tournament.id }})" style="background: linear-gradient(135deg, #00ffcc, #0099ff); color: black; box-shadow: 0 0 15px #00ffcc;">Shuffle & Start Tournament</button>
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
         </section>
     </main>
 
-    <script src="static/script.js"></script>
+    <script src="static/script.js"></script> 
 </body>
 </html>
