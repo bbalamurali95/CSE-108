@@ -23,6 +23,7 @@ function handleLogin(event) {
     event.preventDefault();
 
     const xhttp = new XMLHttpRequest();
+    xhttp.withCredentials = true; 
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
     const body = {"username": username, "password": password};
@@ -30,22 +31,44 @@ function handleLogin(event) {
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
     xhttp.onload = function() {
-        //const data = JSON.parse(this.responseText);
-        //console.log(data);
-        console.log("Raw response:", this.responseText);  // add this
-
         console.log("Status: ", this.status);
-        //console.log("Responsse: ", this.data);
-
-
         if (this.status === 200) {
             window.location.href = "/";
         } else {
             alert(this.responseText);
         }
     }
+}
 
-    
+function handleLogout(event) {
+    event.preventDefault();
+
+    const xhttp = new XMLHttpRequest();
+    xhttp.withCredentials = true;
+    xhttp.open("POST", "/logout", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send();
+    xhttp.onload = function() {
+        if (this.status === 200) {
+            window.location.href = "/";
+        }
+    }
+}
+
+function createTournament(event) {
+    event.preventDefault();
+
+    const xhttp = new XMLHttpRequest();
+    const tourneyName = document.getElementById("tourneyNameBox").value
+    const tourneyUrl = document.getElementById("tourneyUrlBox").value
+    const body = {"name": tourneyName, "url": tourneyUrl};
+    xhttp.open("POST", "/create_tournament", true);
+    xhttp.sendRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(body));
+    xhttp.onload = function() {
+        if (this.status === 201) window.location.reload();
+        else console.error("Failed to create tournament");
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {

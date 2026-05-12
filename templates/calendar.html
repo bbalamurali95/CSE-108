@@ -5,6 +5,7 @@
  <title> Calender</title> 
  <link rel = "stylesheet" href="/static/style.css">
  <link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <script src="/static/script.js"></script>
 </head>
 
 <body id = "calender-body">
@@ -19,8 +20,11 @@
         <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
         <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
         <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-        <li><a href="{{url_for('login_page')}}">Login</a></li>
-        <li><a href="{{url_for('signup_page')}}">Sign up</a></li>
+        {% if logged_in %}
+            <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login_page') }}">Login</a></li>
+        {% endif %}
     </ul>
 </nav>
     

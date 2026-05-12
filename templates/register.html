@@ -3,6 +3,7 @@
 <head>
     <title>Tournament Sign Up</title>
     <link rel="stylesheet" href="static/styles.css">
+    <script src="/static/script.js"></script>
 </head>
 <body>
     <nav>
@@ -16,8 +17,11 @@
         <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
         <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
         <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-        <li><a href="{{url_for('login_page')}}">Login</a></li>
-        <li><a href="{{url_for('signup_page')}}">Sign up</a></li>
+        {% if logged_in %}
+            <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login_page') }}">Login</a></li>
+        {% endif %}
     </ul>
 </nav>
 
