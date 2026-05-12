@@ -399,16 +399,16 @@ def leaderboard_api():
     result = []
     for user in users:
         total = user.sf6_wins + user.t8_wins + user.gg_wins
-        if game == "Street Fighter":
-            wins = user.sf6_wins
-        elif game == "Tekken":
-            wins = user.t8_wins
-        elif game == "Guilty Gear":
-            wins = user.gg_wins
-        else:
-            wins = total
-        result.append({"name": user.username, "wins": wins, "game": game})
-
+        # Find the game they have the most wins in
+        best_game = max(
+            [("Street Fighter", user.sf6_wins), ("Tekken", user.t8_wins), ("Guilty Gear", user.gg_wins)],
+            key=lambda x: x[1]
+        )
+        result.append({
+            "name": user.username,
+            "wins": total,
+            "game": best_game[0] if best_game[1] > 0 else "None"
+        })
     return jsonify(result)
 
 if __name__ == '__main__':
