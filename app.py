@@ -34,9 +34,6 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-with app.app_context():
-    db.create_all()
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -100,6 +97,9 @@ def initialize_bracket_slots(tournament_id):
         db.session.add(match)
     
     db.session.commit()
+
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def index():
