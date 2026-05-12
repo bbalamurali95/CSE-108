@@ -21,9 +21,9 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    background: radial-gradient(circle at top, #2b003d, #090909 55%, #000000);
+   
     background-attachment: fixed;
-    background: #342d35;
+    background: linear-gradient(180deg, #1c0128 0%, #230202 100%);
 }
 
 #login-body{
@@ -469,7 +469,44 @@ input::-webkit-credentials-auto-fill-button {
     }
 }
 
+/* --- THE BOX (Container) --- */
+.container2 .slider {
+    position: relative;
+    width: 100%;
+    /* Option A: Define a fixed height like your hero */
+    height: 500px; 
+    
+    /* Option B: Or force a specific ratio (e.g., 16:9 widescreen) */
+    /* aspect-ratio: 16 / 9; */
+    
+    overflow: hidden;
+    background: #000; /* Black bars if an image fails to load */
+    border-radius: 8px; /* Optional: matches your site's clean aesthetic */
+}
 
+.game-img-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* Shows the full image, no matter what */
+    object-fit: contain; 
+    /* Keeps the background black for the "letterbox" bars */
+    background-color: #000; 
+    opacity: 0;
+    animation: cycleGames 18s infinite;
+}
+
+/* Staggered Delays */
+.game-img-slide:nth-child(1) { animation-delay: 0s; }
+.game-img-slide:nth-child(2) { animation-delay: 6s; }
+.game-img-slide:nth-child(3) { animation-delay: 12s; }
+
+/* The Fading Logic */
+@keyframes cycleGames {
+    0%, 25% { opacity: 1; }   /* Visible for the first 25% of the 12s */
+    30%, 100% { opacity: 0; }  /* Fades out and stays hidden */
+}
 
 .container2{
     padding: 2rem;
@@ -522,7 +559,39 @@ input::-webkit-credentials-auto-fill-button {
     opacity: 1;
 }
 
+.game-gallery-row {
+    display: flex;
+    flex-direction: row;      /* Force side-by-side layout */
+    align-items: center;      /* Vertically center characters with the box */
+    justify-content: center;  /* Center the group on the page */
+    gap: 20px;                /* Space between characters and slider */
+    width: 100%;
+    margin: 40px auto;
+}
 
+.side-character {
+    width: 350px; /* Increase this number to make them larger */
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    transition: transform 0.3s ease; /* Adds a smooth feel when they move */
+}
+.container2 {
+    flex: 0 1 700px;          /* Slider width target */
+    position: relative;
+}
+
+/* Ensure the slider uses the 18s animation for 3 images */
+.game-img-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+    opacity: 0;
+    animation: cycleGames 18s infinite;
+}
 
 
 
