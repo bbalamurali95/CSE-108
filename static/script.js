@@ -115,24 +115,6 @@ function joinTournament(event) {
     }
 }
 
-function startTournament(tournamentId) {
-    const xhttp = new XMLHttpRequest();
-    const body = {"tournament_id": tournamentId};
-    
-    xhttp.open("POST", "/start_tournament", true);
-    xhttp.setRequestHeader("Content-Type", "application/json");
-    xhttp.send(JSON.stringify(body));
-    
-    xhttp.onload = function() {
-        if (this.status === 200) {
-            alert("Tournament Started!");
-            window.location.reload();
-        } else {
-            alert("Error starting tournament.");
-        }
-    }
-}
-
 function filterTournaments() {
     const gameSelect = document.getElementById("gameSelect").value;
     const tourneySelect = document.getElementById("tournamentSelect");
@@ -158,6 +140,71 @@ function filterTournaments() {
             option.text = t.name;
             tourneySelect.appendChild(option);
         });
+    }
+}
+
+function filterAdminTournaments() {
+    const gameSelect = document.getElementById("adminGameSelect").value;
+    const tourneySelect = document.getElementById("adminTournamentSelect");
+
+    tourneySelect.innerHTML = "";
+
+    if (!gameSelect) {
+        tourneySelect.innerHTML = '<option value="">-- Select a Game First --</option>';
+        tourneySelect.disabled = true;
+        return;
+    }
+
+    const filtered = allTournaments.filter(t => t.game === gameSelect);
+
+    if (filtered.length === 0) {
+        tourneySelect.innerHTML = '<option value="">No tournaments found</option>';
+        tourneySelect.disabled = true;
+    } else {
+        tourneySelect.disabled = false;
+        tourneySelect.innerHTML = '<option value="">-- Choose Bracket to Start --</option>';
+        filtered.forEach(t => {
+            const option = document.createElement("option");
+            option.value = t.id;
+            option.text = t.name;
+            tourneySelect.appendChild(option);
+        });
+    }
+}
+
+function startAdminTournament() {
+    const tourneySelect = document.getElementById("adminTournamentSelect");
+    const tournamentId = tourneySelect.value;
+
+    if (!tournamentId) {
+        alert("Please select a valid tournament to start.");
+        return;
+    }
+
+    if (!confirm("Are you sure? This will lock registration and generate the bracket!")) {
+        return;
+    }
+
+    const xhttp = new XMLHttpRequest();
+    const body = {"tournament_id": tournamentId};
+
+    xhttp.open("POST", "/start_tournament", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(body));
+
+    xhttp.onload = function() {
+        if (this.status === 200) {
+            alert("Tournament Started Successfully!");
+            // Instantly redirect the admin to view the bracket they just started!
+            window.location.href = "/tournament?id=" + tournamentId;
+        } else {
+            let errorMsg = "Error starting tournament.";
+            try {
+                const data = JSON.parse(this.responseText);
+                if (data.error) errorMsg = data.error;
+            } catch(e) {}
+            alert(errorMsg);
+        }
     }
 }
 

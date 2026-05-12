@@ -290,7 +290,7 @@ def start_tournament():
     data = request.get_json()
     tournament = Tournament.query.get(data.get("tournament_id"))
 
-    players = tournament.pariticipants
+    players = tournament.participants
     random.shuffle(players)
     num_players = len(players)
 

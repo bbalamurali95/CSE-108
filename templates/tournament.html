@@ -12,18 +12,18 @@
             <h2 class="nav-title">Fighting Game Club</h2>
         </div>
 
-    <ul class="nav-links">
-        <li><a href="{{url_for('index')}}">Home</a></li>
-        <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
-        <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
-        <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-        {% if logged_in %}
-            <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
-        {% else %}
-            <li><a href="{{ url_for('login_page') }}">Login</a></li>
-        {% endif %}
-    </ul>
-</nav>
+        <ul class="nav-links">
+            <li><a href="{{url_for('index')}}">Home</a></li>
+            <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+            <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+            <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+            {% if logged_in %}
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login_page') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 
     <main>
         <section class="signup-banner">
@@ -34,76 +34,50 @@
             <a class="signup-big-button" href="{{url_for('t_register')}}">Tournament Sign Up</a>
         </section>
 
-        <section class=\"tournament-section\">
+        <section class="tournament-section">
+            
+            <div class="bracket-selector" style="background: rgba(15, 15, 15, 0.8); padding: 20px; border: 2px solid #7b00ff; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <h3 style="margin: 0; color: #00ffcc;">View Bracket:</h3>
+                
+                <select id="gameSelect" onchange="filterTournaments()" style="padding: 10px;">
+                    <option value="">-- Select Game --</option>
+                    <option value="Street Fighter">Street Fighter</option>
+                    <option value="Tekken">Tekken</option>
+                    <option value="Guilty Gear">Guilty Gear</option>
+                </select>
+                
+                <select id="tournamentSelect" disabled style="padding: 10px; min-width: 200px;">
+                    <option value="">-- Select Game First --</option>
+                </select>
+                
+                <button onclick="loadBracket()" style="padding: 10px 20px; background: linear-gradient(135deg, #7b00ff, #ff003c); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Load Bracket</button>
+            </div>
+
             {% if active_tournament %}
                 <h2>{{ active_tournament.name }} ({{ active_tournament.game }})</h2>
 
-                <div class="bracket-board">
-                    <h3 class="bracket-title">Winners Bracket</h3>
-                    
-                    <div class="grid-bracket {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
+                {% if upper_matches|length > 0 %}
+                    <div class="bracket-board">
                         
-                        {% if upper_matches|length <= 8 %}
-                            <h4 class="round-label col1-label">Quarter-Finals</h4>
-                            <h4 class="round-label col2-label">Semi-Finals</h4>
-                            <h4 class="round-label col3-label">Winners Final</h4>
-                            <h4 class="round-label col4-label">Grand Final</h4>
-                        {% else %}
-                            <h4 class="round-label col1-label">Winners R1</h4>
-                            <h4 class="round-label col2-label">Quarter-Finals</h4>
-                            <h4 class="round-label col3-label">Semi-Finals</h4>
-                            <h4 class="round-label col4-label">Winners Final</h4>
-                            <h4 class="round-label col5-label">Grand Final</h4>
-                        {% endif %}
-
-                        {% for match in upper_matches %}
-                            <div class="bracket-match {{ match.grid_class }} {% if 'gf' in match.grid_class %}grand-match{% endif %}">
-                                <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
-                                    {% if is_admin and match.player1 and not match.winner_id %}
-                                        <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
-                                            {{ match.player1.username }}
-                                        </span>
-                                    {% else %}
-                                        {{ match.player1.username if match.player1 else 'TBD' }}
-                                    {% endif %}
-                                </div>
-                                <div {% if match.winner_id and match.winner_id == match.player2_id %}style="color: gold; font-weight: bold;"{% endif %}>
-                                    {% if is_admin and match.player2 and not match.winner_id %}
-                                        <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player2_id }})">
-                                            {{ match.player2.username }}
-                                        </span>
-                                    {% else %}
-                                        {{ match.player2.username if match.player2 else 'TBD' }}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-
-                        <div class="champion-box u-champion {% if upper_matches|length <= 8 %}eight-champ{% endif %}">
-                            <span>🏆 TBD</span>
-                        </div>
-                    </div>
-
-                    <div class="lower-bracket-area">
-                        <h3 class="lower-title">Losers Bracket</h3>
+                        <h3 class="bracket-title">Winners Bracket</h3>
                         
-                        <div class="grid-bracket lower-grid {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
+                        <div class="grid-bracket {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
                             
                             {% if upper_matches|length <= 8 %}
-                                <h4 class="round-label l-col1-label">Losers R1</h4>
-                                <h4 class="round-label l-col2-label">Losers QF</h4>
-                                <h4 class="round-label l-col3-label">Losers SF</h4>
-                                <h4 class="round-label l-col4-label">Losers Final</h4>
+                                <h4 class="round-label col1-label">Quarter-Finals</h4>
+                                <h4 class="round-label col2-label">Semi-Finals</h4>
+                                <h4 class="round-label col3-label">Winners Final</h4>
+                                <h4 class="round-label col4-label">Grand Final</h4>
                             {% else %}
-                                <h4 class="round-label l-col1-label">Losers R1</h4>
-                                <h4 class="round-label l-col2-label">Losers R2</h4>
-                                <h4 class="round-label l-col3-label">Losers QF</h4>
-                                <h4 class="round-label l-col4-label">Losers SF</h4>
-                                <h4 class="round-label l-col5-label">Losers Final</h4>
+                                <h4 class="round-label col1-label">Winners R1</h4>
+                                <h4 class="round-label col2-label">Quarter-Finals</h4>
+                                <h4 class="round-label col3-label">Semi-Finals</h4>
+                                <h4 class="round-label col4-label">Winners Final</h4>
+                                <h4 class="round-label col5-label">Grand Final</h4>
                             {% endif %}
 
-                            {% for match in lower_matches %}
-                                <div class="bracket-match lower-match {{ match.grid_class }}">
+                            {% for match in upper_matches %}
+                                <div class="bracket-match {{ match.grid_class }} {% if 'gf' in match.grid_class %}grand-match{% endif %}">
                                     <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
                                         {% if is_admin and match.player1 and not match.winner_id %}
                                             <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
@@ -124,12 +98,82 @@
                                     </div>
                                 </div>
                             {% endfor %}
+
+                            <div class="champion-box u-champion {% if upper_matches|length <= 8 %}eight-champ{% endif %}">
+                                <span>🏆 TBD</span>
+                            </div>
+                        </div>
+
+                        <div class="lower-bracket-area">
+                            <h3 class="lower-title">Losers Bracket</h3>
+                            
+                            <div class="grid-bracket lower-grid {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
+                                
+                                {% if upper_matches|length <= 8 %}
+                                    <h4 class="round-label l-col1-label">Losers R1</h4>
+                                    <h4 class="round-label l-col2-label">Losers QF</h4>
+                                    <h4 class="round-label l-col3-label">Losers SF</h4>
+                                    <h4 class="round-label l-col4-label">Losers Final</h4>
+                                {% else %}
+                                    <h4 class="round-label l-col1-label">Losers R1</h4>
+                                    <h4 class="round-label l-col2-label">Losers R2</h4>
+                                    <h4 class="round-label l-col3-label">Losers QF</h4>
+                                    <h4 class="round-label l-col4-label">Losers SF</h4>
+                                    <h4 class="round-label l-col5-label">Losers Final</h4>
+                                {% endif %}
+
+                                {% for match in lower_matches %}
+                                    <div class="bracket-match lower-match {{ match.grid_class }}">
+                                        <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                            {% if is_admin and match.player1 and not match.winner_id %}
+                                                <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
+                                                    {{ match.player1.username }}
+                                                </span>
+                                            {% else %}
+                                                {{ match.player1.username if match.player1 else 'TBD' }}
+                                            {% endif %}
+                                        </div>
+                                        <div {% if match.winner_id and match.winner_id == match.player2_id %}style="color: gold; font-weight: bold;"{% endif %}>
+                                            {% if is_admin and match.player2 and not match.winner_id %}
+                                                <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player2_id }})">
+                                                    {{ match.player2.username }}
+                                                </span>
+                                            {% else %}
+                                                {{ match.player2.username if match.player2 else 'TBD' }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                {% else %}
+                    <div class="pending-lobby" style="background: rgba(15, 15, 15, 0.8); border: 2px solid #00ffcc; border-radius: 12px; padding: 40px 20px; text-align: center; margin-top: 20px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);">
+                        <h3 style="color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 28px; margin-top: 0;">Bracket Pending</h3>
+                        <p style="color: #ddd; font-size: 16px;">Registration is currently open. Waiting for an admin to shuffle and start the bracket!</p>
+                        
+                        <h4 style="color: #ff003c; margin-top: 40px; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; display: inline-block;">
+                            Registered Players ({{ active_tournament.participants|length }})
+                        </h4>
+                        
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            {% for player in active_tournament.participants %}
+                                <div style="background: rgba(255, 0, 60, 0.15); border: 1px solid #ff003c; padding: 12px 25px; border-radius: 8px; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(255, 0, 60, 0.3); letter-spacing: 1px;">
+                                    🎮 {{ player.username }}
+                                </div>
+                            {% else %}
+                                <p style="color: #888; font-style: italic; margin-top: 10px;">No players have joined yet. Be the first!</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
 
             {% else %}
-                <h2>No Active Tournaments</h2>
+                <div style="text-align: center; padding: 60px 20px; background: rgba(15,15,15,0.5); border: 2px dashed #7b00ff; border-radius: 12px; margin-top: 20px;">
+                    <h2 style="color: #00ffcc; text-shadow: 0 0 10px #00ffcc;">No Bracket Selected</h2>
+                    <p style="color: #aaa; font-size: 18px;">Use the dropdown menu above to select a game and load a tournament bracket.</p>
+                </div>
             {% endif %}
 
             {% if is_admin %}
@@ -147,16 +191,50 @@
                         <button type="submit" style="margin-top: 10px;">Create Local Bracket</button>
                     </form>
 
-                    {% if active_tournament %}
-                        <div style="margin-top: 20px;">
-                            <button onclick="startTournament({{ active_tournament.id }})" style="background: linear-gradient(135deg, #00ffcc, #0099ff); color: black; box-shadow: 0 0 15px #00ffcc;">Shuffle & Start Tournament</button>
+                    <div style="margin-top: 35px; border-top: 2px dashed #ff003c; padding-top: 20px;">
+                        <h3 style="color: #00ffcc; margin-top: 0;">Start a Bracket</h3>
+                        <p style="color: #aaa; font-size: 14px; margin-bottom: 15px;">Warning: Starting a bracket locks registration and generates the matches.</p>
+                                        
+                        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                            <select id="adminGameSelect" onchange="filterAdminTournaments()" style="padding: 10px;">
+                                <option value="">-- Select Game --</option>
+                                <option value="Street Fighter">Street Fighter</option>
+                                <option value="Tekken">Tekken</option>
+                                <option value="Guilty Gear">Guilty Gear</option>
+                            </select>
+                        
+                            <select id="adminTournamentSelect" disabled style="padding: 10px; min-width: 200px;">
+                                <option value="">-- Select Game First --</option>
+                            </select>
+                        
+                            <button type="button" onclick="startAdminTournament()" style="background: linear-gradient(135deg, #00ffcc, #0099ff); color: black; box-shadow: 0 0 15px #00ffcc; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                                Shuffle & Start
+                            </button>
                         </div>
-                    {% endif %}
+                    </div>
                 </div>
             {% endif %}
         </section>
     </main>
 
-    <script src="static/script.js"></script> 
+    <script src="static/script.js"></script>
+    <script>
+        // Pass the database list to Javascript
+        const allTournaments = [
+            {% for t in all_tournaments %}
+                { id: {{ t.id }}, name: "{{ t.name }}", game: "{{ t.game }}" },
+            {% endfor %}
+        ];
+
+        // Reload the page with the requested ID in the URL
+        function loadBracket() {
+            const tourneyId = document.getElementById("tournamentSelect").value;
+            if (tourneyId) {
+                window.location.href = "/tournament?id=" + tourneyId;
+            } else {
+                alert("Please select a tournament to view.");
+            }
+        }
+    </script>
 </body>
 </html>
