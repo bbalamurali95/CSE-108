@@ -297,18 +297,7 @@ input::-webkit-credentials-auto-fill-button {
     object-fit: cover;
 }
 
-:root{
-    --primary: #4a6bdf;
-    --secondary: #a436e8;
-    --accent: #28a1cd;
-    --light: #c8dee1;
-    --dark: #292a2f;
-    --text: #5b5659;
-    --today: #a46baf;
-    --selected: #8254aa;
-    --event-panel-bg: #cfd5ea;
-    --tournament: #f1c40f;
-}
+
 
 #days.dot.tournament{
     background-color: var(--tournament);
