@@ -153,7 +153,8 @@ def tournament_page():
         is_admin=is_admin_flag,
         upper_matches=upper_matches,
         lower_matches=lower_matches,
-        champion=champion
+        champion=champion,
+        logged_in=is_logged_in()
     )
 
 @app.route("/leaderboard")
