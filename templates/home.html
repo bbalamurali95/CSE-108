@@ -42,32 +42,54 @@
 
 
     <div>
-        <h1 class = home-text><br> GAMES <br><br> </h1>
+        <h1 class = home-text><br> GAMES <br> </h1>
     </div>
 
-    <section class ="container2"> 
+
+<!-- Outer wrapper for the whole row -->
+<div class="game-gallery-row">
+    <!-- Left Side: Jin -->
+    <img src="/static/jin.png" class="side-character" alt="Jin Kazama">
+
+    <!-- Center: The Rotating Games Section -->
+    <div class="container2"> 
         <div class="slider-wrapper">
             <div class="slider">
-                 <img id ="slide-1" src="/static/tekken.jpg">
-                 <img id ="slide-2" src="/static/Street.jpg">
-                 <img id ="slide-3" src="/static/GuiltyGear.jpeg">
-            </div>
-            <div class = "slider-nav">
-                <a href="#slide-1"></a>
-                <a href="#slide-2"></a>
-                <a href="#slide-3"></a>
+                 <img class="game-img-slide" src="/static/tek.jpeg">
+                 <img class="game-img-slide" src="/static/Street.jpg">
+                 <img class="game-img-slide" src="/static/Guilty.jpg">
             </div>
         </div>
+    </div>
+
+    <!-- Right Side: Kazuya -->
+    <img src="/static/Kazuya.png" class="side-character" alt="Kazuya Mishima">
+</div>
+
+  
+
+    <section class="game">
+        <div class="content-side">
+            <div class="game-header gg-red">
+                <h3>GUILTY GEAR</h3>
+            </div>
+             <div class="game-description gg">
+        The renowned 2D, fast paced, anime fighter with 25+ on campus players of all skill levels.
+    </div>
+        </div>
+        <div class="game-video">
+            <video autoplay loop muted playsinline class="back-video">
+              <source src="/static/GG.mp4" type="video/mp4">
+            </video>
+        </div>
     </section>
-
-
     <section class="game">
         <div class="content-side">
             <div class="game-header tekken-pink">
                 <h3>TEKKEN 8</h3>
             </div>
              <div class="game-description tk">
-        Law goat
+        A traditional 3D fighter that challenges our high skill players with their movement and patience.
     </div>
         </div>
         <div class="game-video">
@@ -82,7 +104,7 @@
                 <h3>STREET FIGHTER 6</h3>
             </div>
             <div class="game-description sf">
-        street fighter
+        The Classic Fighting Game where spacing and resource management is key.
     </div>
         </div>
         <div class="game-video">
@@ -91,21 +113,7 @@
             </video>
         </div>
     </section>
-    <section class="game">
-        <div class="content-side">
-            <div class="game-header gg-red">
-                <h3>GUILTY GEAR</h3>
-            </div>
-             <div class="game-description gg">
-        Johhny is the goat
-    </div>
-        </div>
-        <div class="game-video">
-            <video autoplay loop muted playsinline class="back-video">
-              <source src="/static/GG.mp4" type="video/mp4">
-            </video>
-        </div>
-    </section>
+    
 
 </body>
 </html>

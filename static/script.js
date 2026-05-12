@@ -3,7 +3,6 @@ function createUser(event) {
     const xhttp = new XMLHttpRequest();
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
-
     const body = {"username": username, "password": password};
 
     xhttp.open("POST", "/register", true);
@@ -46,17 +45,18 @@ function handleLogin(event) {
 
 function handleLogout(event) {
     event.preventDefault();
-
     const xhttp = new XMLHttpRequest();
+
     xhttp.withCredentials = true;
     xhttp.open("POST", "/logout", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send();
+
     xhttp.onload = function() {
         if (this.status === 200) {
             window.location.href = "/";
         }
-    }
+    };
 }
 
 function createTournament(event) {
@@ -65,30 +65,33 @@ function createTournament(event) {
     const xhttp = new XMLHttpRequest();
     const tourneyName = document.getElementById("tourneyNameBox").value;
     const tourneyGame = document.getElementById("tourneyGameBox").value;
-    
     const body = {"name": tourneyName, "game": tourneyGame};
-    
-    xhttp.open("POST", "/create_tournament", true); 
+
+    xhttp.open("POST", "/create_tournament", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
-    
+
     xhttp.onload = function() {
         if (this.status === 201) {
             window.location.reload();
         } else {
             let errorMsg = "Unknown error";
+
             try {
                 const data = JSON.parse(this.responseText);
-                if (data.error) errorMsg = data.error;
+                if (data.error) {
+                    errorMsg = data.error;
+                }
             } catch(e) {}
-            
+
             alert(`Failed to create tournament.\nStatus code: ${this.status}\nReason: ${errorMsg}`);
         }
-    }
+    };
 }
 
 function joinTournament(event) {
     event.preventDefault();
+
     const tourneySelect = document.getElementById("tournamentSelect");
     const responseMessage = document.getElementById("signupMessage");
 
@@ -100,11 +103,14 @@ function joinTournament(event) {
 
     const xhttp = new XMLHttpRequest();
     const body = {"tournament_id": tourneySelect.value};
-    xhttp.open("POST", "/join_tournament", true)
+
+    xhttp.open("POST", "/join_tournament", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
+
     xhttp.onload = function() {
         const data = JSON.parse(this.responseText);
+
         if (this.status === 200) {
             responseMessage.innerText = data.message;
             responseMessage.style.color = "#00ffcc";
@@ -112,17 +118,17 @@ function joinTournament(event) {
             responseMessage.innerText = data.error || "Failed to join tournament.";
             responseMessage.style.color = "#ff003c";
         }
-    }
+    };
 }
 
 function startTournament(tournamentId) {
     const xhttp = new XMLHttpRequest();
     const body = {"tournament_id": tournamentId};
-    
+
     xhttp.open("POST", "/start_tournament", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
-    
+
     xhttp.onload = function() {
         if (this.status === 200) {
             alert("Tournament Started!");
@@ -130,15 +136,15 @@ function startTournament(tournamentId) {
         } else {
             alert("Error starting tournament.");
         }
-    }
+    };
 }
 
 function filterTournaments() {
     const gameSelect = document.getElementById("gameSelect").value;
     const tourneySelect = document.getElementById("tournamentSelect");
-    
+
     tourneySelect.innerHTML = "";
-    
+
     if (!gameSelect) {
         tourneySelect.innerHTML = '<option value="">-- Select a Game First --</option>';
         tourneySelect.disabled = true;
@@ -146,12 +152,13 @@ function filterTournaments() {
     }
 
     const filtered = allTournaments.filter(t => t.game === gameSelect);
-    
+
     if (filtered.length === 0) {
         tourneySelect.innerHTML = '<option value="">No active tournaments for this game</option>';
         tourneySelect.disabled = true;
     } else {
         tourneySelect.disabled = false;
+
         filtered.forEach(t => {
             const option = document.createElement("option");
             option.value = t.id;
@@ -162,22 +169,24 @@ function filterTournaments() {
 }
 
 function setWinner(matchId, playerId) {
-    if (!confirm("Are you sure this player won? This will advance the bracket.")) return;
+    if (!confirm("Are you sure this player won? This will advance the bracket.")) {
+        return;
+    }
 
     const xhttp = new XMLHttpRequest();
     const body = {"match_id": matchId, "winner_id": playerId};
-    
+
     xhttp.open("POST", "/report_winner", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
-    
+
     xhttp.onload = function() {
         if (this.status === 200) {
             window.location.reload();
         } else {
             alert("Error reporting winner.");
         }
-    }
+    };
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -199,9 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedDate = new Date(2026, 4, 13);
 
     const specialEvents = {
-        "2026-5-4": [
-            { time: "6:30 PM", text: "Street Fighter Casuals", color: "street" }
-        ],
         "2026-5-13": [
             { time: "4:00 PM", text: "Tekken 8 Tournament", color: "tekken" }
         ],
@@ -209,7 +215,6 @@ document.addEventListener("DOMContentLoaded", function () {
             { time: "7:00 PM", text: "Guilty Gear Night", color: "guilty" }
         ]
     };
-});
 
     function getEventsForDate(dateKey, dateObj) {
         let dayEvents = [];
@@ -219,7 +224,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (dateObj.getDay() === 5) {
-            dayEvents.push({ time: "5:30 PM", text: "Club Meeting", color: "club" });
+            dayEvents.push({
+                time: "5:30 PM",
+                text: "Club Meeting",
+                color: "club"
+            });
         }
 
         return dayEvents;
@@ -286,9 +295,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let dotsHtml = "";
 
-
-            
-
             if (dayEvents.length > 0) {
                 dotsHtml += '<div class="event-dots-container">';
 
@@ -317,7 +323,9 @@ document.addEventListener("DOMContentLoaded", function () {
             day.addEventListener("click", function() {
                 const dateStr = day.getAttribute("data-date");
                 const parts = dateStr.split("-").map(Number);
+
                 selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+
                 renderCalendar();
                 showEvents(dateStr);
             });
@@ -341,6 +349,19 @@ document.addEventListener("DOMContentLoaded", function () {
         eventListEl.innerHTML = "";
 
         const dayEvents = getEventsForDate(dateStr, dateObj);
+        if (indicatorDot && indicatorText) {
+    if (dayEvents.length === 0) {
+        indicatorDot.className = "fas fa-circle indicator-dot";
+        indicatorText.textContent = "No events";
+    } else if (dayEvents.length === 1) {
+        indicatorDot.className = "fas fa-circle indicator-dot " + dayEvents[0].color;
+        indicatorText.textContent = dayEvents[0].text;
+    } else {
+        indicatorDot.className = "fas fa-circle indicator-dot " + dayEvents[0].color;
+        indicatorText.textContent = dayEvents.length + " events today";
+    }
+}
+
         updateFooterIndicator(dayEvents);
 
         if (dayEvents.length > 0) {
@@ -374,17 +395,24 @@ document.addEventListener("DOMContentLoaded", function () {
     todayBtn.addEventListener("click", function() {
         currentDate = new Date();
         selectedDate = new Date();
+
         renderCalendar();
 
-        const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+        const dateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+        showEvents(dateStr);
+    });
+
+    renderCalendar();
+
+    const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
     showEvents(startingDate);
 });
 
 let currentIndex = 0;
 
 function moveSlide(direction) {
-    const slider = document.querySelector('.slider');
-    const slides = document.querySelectorAll('.slide-img');
+    const slider = document.querySelector(".slider");
+    const slides = document.querySelectorAll(".slide-img");
     const totalSlides = slides.length;
 
     currentIndex += direction;
@@ -396,9 +424,10 @@ function moveSlide(direction) {
     }
 
     const slideWidth = slider.clientWidth;
+
     slider.scrollTo({
         left: slideWidth * currentIndex,
-        behavior: 'smooth'
+        behavior: "smooth"
     });
 }
 
@@ -437,3 +466,4 @@ document.addEventListener("DOMContentLoaded", function() {
         // renderCalendar(); 
     }
 });
+
