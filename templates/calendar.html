@@ -25,9 +25,11 @@
         {% endif %}
     </ul>
 </nav>
+
 <div class="calendar-layout">
     <img src="/static/Sol_Badguy.png" class="calendar-character left-character" alt="Sol Badguy">
-    <div class="container">
+
+    <div class="container calendar-main-container">
         <div class="calender-container">
             <div class="calendar-header">
                 <div class="nav-buttons">
@@ -36,6 +38,7 @@
                 </div>
                 <div class="month-year" id="month-year">May 2026</div>
             </div>
+
             <div class="weekdays">
                 <div class="weekday">Sun</div>
                 <div class="weekday">Mon</div>
@@ -45,25 +48,33 @@
                 <div class="weekday">Fri</div>
                 <div class="weekday">Sat</div>
             </div>
+
             <div class="days" id="days"></div>
+
             <div class="calendar-footer">
-                <button class="today-btn" id="today-btn"><i class="fas fa-calendar-day"></i> Today</button>
+                <button class="today-btn" id="today-btn">
+                    <i class="fas fa-calendar-day"></i> Today
+                </button>
+
                 <div class="event-indicator" id="event-indicator">
                     <i class="fas fa-circle indicator-dot" id="event-indicator-dot"></i>
                     <span id="event-indicator-text">Select an event</span>
                 </div>
             </div>
         </div>
+
         <div class="event-panel" id="event-panel">
             <div class="event-header">
                 <div class="event-date" id="event-date">Select a date</div>
                 <i class="fas fa-calendar-alt event-icon"></i>
             </div>
+
             <div class="event-list" id="event-list">
                 <div class="no-events">Select a date with events to view them.</div>
             </div>
         </div>
     </div>
+
     <img src="/static/Yoshimitsu.png" class="calendar-character right-character" alt="Yoshimitsu">
 </div>
 </body>
