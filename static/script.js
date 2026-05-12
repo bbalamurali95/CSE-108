@@ -209,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
             { time: "7:00 PM", text: "Guilty Gear Night", color: "guilty" }
         ]
     };
+});
 
     function getEventsForDate(dateKey, dateObj) {
         let dayEvents = [];
@@ -372,17 +373,9 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedDate = new Date();
         renderCalendar();
 
-        const dateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-        showEvents(dateStr);
-    });
-
-    renderCalendar();
-<<<<<<< HEAD
+        const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+    showEvents(startingDate);
 });
-
-
-
-
 
 let currentIndex = 0;
 
@@ -391,26 +384,17 @@ function moveSlide(direction) {
     const slides = document.querySelectorAll('.slide-img');
     const totalSlides = slides.length;
 
-    // 1. Update the index based on button clicked (+1 or -1)
     currentIndex += direction;
 
-    // 2. Loop logic
     if (currentIndex >= totalSlides) {
-        currentIndex = 0; // Go back to the first image
+        currentIndex = 0;
     } else if (currentIndex < 0) {
-        currentIndex = totalSlides - 1; // Go to the last image
+        currentIndex = totalSlides - 1;
     }
 
-    // 3. Perform the scroll
-    // We multiply the width of one slide by the current index
     const slideWidth = slider.clientWidth;
     slider.scrollTo({
         left: slideWidth * currentIndex,
         behavior: 'smooth'
     });
 }
-=======
-
-    const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
-    showEvents(startingDate);
-});
