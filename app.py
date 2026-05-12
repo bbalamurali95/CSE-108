@@ -151,7 +151,8 @@ def tournament_page():
 
 @app.route("/leaderboard")
 def leaderboard_page():
-    return render_template("leaderboard.html", logged_in=is_logged_in())
+    player_count = User.query.count()
+    return render_template("leaderboard.html", logged_in=is_logged_in(), player_count=player_count)
 
 @app.route("/t_register")
 def t_register():
