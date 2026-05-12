@@ -401,3 +401,39 @@ function moveSlide(direction) {
         behavior: 'smooth'
     });
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    // --- PART 1: GAME ANIMATIONS ---
+    const gameSections = document.querySelectorAll('.game');
+    
+    // Only run the observer if there are actually .game sections on this page
+    if (gameSections.length > 0) {
+        const observerOptions = {
+            threshold: 0.2 
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const elements = entry.target.querySelectorAll('.game-header, .game-description, .game-textbox');
+                    elements.forEach(el => {
+                        el.classList.add('animate-in');
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        gameSections.forEach(section => {
+            observer.observe(section);
+        });
+    }
+
+    // --- PART 2: CALENDAR CHECK (Prevents Crashes) ---
+    // If you have calendar code below this, wrap it in a check like this:
+    const daysContainer = document.getElementById("days");
+    if (daysContainer) {
+        // Only run calendar functions if 'days' exists (Calendar Page only)
+        // renderCalendar(); 
+    }
+});

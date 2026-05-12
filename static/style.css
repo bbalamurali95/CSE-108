@@ -358,39 +358,6 @@ input::-webkit-credentials-auto-fill-button {
     border-color: #ff0066; 
 }
 
-.game-header, .game-textbox, .game-description {
-    opacity: 0;
-}
-
-
-.animate-in {
-    animation: appear 1.5s ease-out forwards;
-}
-
-
-.game-header.animate-in {
-    animation-delay: 0.75s;     
-}
-
-.game-textbox.animate-in {
-    animation-delay: 2s;    
-}
-
-.game-description.animate-in {
-    animation-delay: 2s;   
-}
-
-/* 4. Define the motion */
-@keyframes appear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 /* Ensures the video fits the box */
 .game-video {
     height: 500px;
