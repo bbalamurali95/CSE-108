@@ -391,3 +391,11 @@ tr:hover {
         padding: 20px;
     }
 }
+
+.admin-clickable {
+    cursor: pointer;
+    text-decoration: underline dotted #ff003c;
+}
+.admin-clickable:hover {
+    color: #00ffcc;
+}
