@@ -128,9 +128,10 @@ def tournament_page():
     requested_id = request.args.get('id')
     
     active_tourney = None
-
     upper_matches = []
     lower_matches = []
+
+    champion = None
 
     if requested_id:
         active_tourney = Tournament.query.get(requested_id)
@@ -139,6 +140,8 @@ def tournament_page():
             for match in all_matches:
                 if match.grid_class.startswith('u-'):
                     upper_matches.append(match)
+                    if match.grid_class in ['u-gf', 'u-8-gf'] and match.winner_id:
+                        champion = User.query.get(match.winner_id)
                 elif match.grid_class.startswith('l-'):
                     lower_matches.append(match)
 
@@ -148,7 +151,8 @@ def tournament_page():
         all_tournaments=all_tournaments, # <-- Pass the list to HTML
         is_admin=is_admin_flag,
         upper_matches=upper_matches,
-        lower_matches=lower_matches
+        lower_matches=lower_matches,
+        champion=champion
     )
 
 @app.route("/leaderboard")

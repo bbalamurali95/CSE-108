@@ -100,7 +100,7 @@
                             {% endfor %}
 
                             <div class="champion-box u-champion {% if upper_matches|length <= 8 %}eight-champ{% endif %}">
-                                <span>🏆 TBD</span>
+                                <span>🏆 {{ champion.username if champion else 'TBD' }}</span>
                             </div>
                         </div>
 
