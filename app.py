@@ -407,31 +407,47 @@ def report_winner():
 @app.route("/api/leaderboard")
 def leaderboard_api():
     game = request.args.get("game", "Overall")
-    
+
     if game == "Street Fighter":
         users = User.query.order_by(User.sf6_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Street Fighter" for t in u.tournaments)]
     elif game == "Tekken":
         users = User.query.order_by(User.t8_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Tekken" for t in u.tournaments)]
     elif game == "Guilty Gear":
         users = User.query.order_by(User.gg_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Guilty Gear" for t in u.tournaments)]
     else:  # Overall
         users = User.query.all()
         users.sort(key=lambda u: u.sf6_wins + u.t8_wins + u.gg_wins, reverse=True)
 
     result = []
     for user in users:
-        total = user.sf6_wins + user.t8_wins + user.gg_wins
-        # Find the game they have the most wins in
-        best_game = max(
-            [("Street Fighter", user.sf6_wins), ("Tekken", user.t8_wins), ("Guilty Gear", user.gg_wins)],
-            key=lambda x: x[1]
-        )
+        if game == "Street Fighter":
+            wins = user.sf6_wins
+        elif game == "Tekken":
+            wins = user.t8_wins
+        elif game == "Guilty Gear":
+            wins = user.gg_wins
+        else:
+            wins = user.sf6_wins + user.t8_wins + user.gg_wins
+
         result.append({
             "name": user.username,
-            "wins": total,
-            "game": best_game[0] if best_game[1] > 0 else "None"
+            "wins": wins,
+            "game": get_main_game(user)
         })
+
     return jsonify(result)
+
+def get_main_game(user):
+    from collections import Counter
+    game_counts = Counter()
+    for tournament in user.tournaments:
+        game_counts[tournament.game] += 1
+    if not game_counts:
+        return "None"
+    return game_counts.most_common(1)[0][0]
 
 if __name__ == '__main__':
     app.run(debug = True, port = 5000)
