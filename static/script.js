@@ -215,41 +215,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     renderCalendar();
-<<<<<<< HEAD
-});
-
-
-
-
-
-let currentIndex = 0;
-
-function moveSlide(direction) {
-    const slider = document.querySelector('.slider');
-    const slides = document.querySelectorAll('.slide-img');
-    const totalSlides = slides.length;
-
-    // 1. Update the index based on button clicked (+1 or -1)
-    currentIndex += direction;
-
-    // 2. Loop logic
-    if (currentIndex >= totalSlides) {
-        currentIndex = 0; // Go back to the first image
-    } else if (currentIndex < 0) {
-        currentIndex = totalSlides - 1; // Go to the last image
-    }
-
-    // 3. Perform the scroll
-    // We multiply the width of one slide by the current index
-    const slideWidth = slider.clientWidth;
-    slider.scrollTo({
-        left: slideWidth * currentIndex,
-        behavior: 'smooth'
-    });
-}
-=======
 
     const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
     showEvents(startingDate);
 });
->>>>>>> 272f1a96d9c04a97974f916ac17e98addd8a46ab
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const observerOptions = {
+        threshold: 0.2 
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              
+                const textboxes = entry.target.querySelectorAll('.game-header,.game-textbox, .game-description');
+                textboxes.forEach(el => el.classList.add('animate-in'));
+                
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+   
+    const gameSections = document.querySelectorAll('.game');
+    gameSections.forEach(section => {
+        observer.observe(section);
+    });
+});
