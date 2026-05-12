@@ -124,26 +124,28 @@ def tournament_page():
         if user and user.is_admin:
             is_admin_flag = True
 
-    latest_tourney = Tournament.query.order_by(Tournament.id.desc()).first()
+    all_tournaments = Tournament.query.all()
+    requested_id = request.args.get('id')
     
-    # Initialize empty lists
+    active_tourney = None
+
     upper_matches = []
     lower_matches = []
 
-    if latest_tourney:
-        # Fetch all matches for this tournament
-        all_matches = Match.query.filter_by(tournament_id=latest_tourney.id).all()
-        
-        # Split them based on their grid class (e.g. 'u-r1-m1' vs 'l-r1-m1')
-        for match in all_matches:
-            if match.grid_class.startswith('u-'):
-                upper_matches.append(match)
-            elif match.grid_class.startswith('l-'):
-                lower_matches.append(match)
+    if requested_id:
+        active_tourney = Tournament.query.get(requested_id)
+        if active_tourney:
+            all_matches = Match.query.filter_by(tournament_id=active_tourney.id).all()
+            for match in all_matches:
+                if match.grid_class.startswith('u-'):
+                    upper_matches.append(match)
+                elif match.grid_class.startswith('l-'):
+                    lower_matches.append(match)
 
     return render_template(
         "tournament.html", 
-        active_tournament=latest_tourney, 
+        active_tournament=active_tourney, 
+        all_tournaments=all_tournaments, # <-- Pass the list to HTML
         is_admin=is_admin_flag,
         upper_matches=upper_matches,
         lower_matches=lower_matches
@@ -215,7 +217,7 @@ def create_tournament():
     db.session.add(new_tourney)
     db.session.commit()
     
-    return jsonify({"message": "Local tournament created! Waiting for players..."}), 403
+    return jsonify({"message": "Local tournament created! Waiting for players..."}), 201
 
 def build_8_man(tourney_id, players):
     upper_slots = ['u-8-r1-m1', 'u-8-r1-m2', 'u-8-r1-m3', 'u-8-r1-m4', 'u-8-r2-m1', 'u-8-r2-m2', 'u-8-r3-m1', 'u-8-gf']
