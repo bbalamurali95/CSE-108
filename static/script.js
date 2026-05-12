@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const todayBtn = document.getElementById("today-btn");
     const eventDateEl = document.getElementById("event-date");
     const eventListEl = document.getElementById("event-list");
+    const indicatorDot = document.getElementById("event-indicator-dot");
+    const indicatorText = document.getElementById("event-indicator-text");
 
     if (!monthYearEl || !daysEl || !prevMonthBtn || !nextMonthBtn || !todayBtn || !eventDateEl || !eventListEl) {
         return;
@@ -59,26 +61,48 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentDate = new Date(2026, 4, 1);
     let selectedDate = new Date(2026, 4, 13);
 
-    const events = {
-        "2026-5-1": [
-            { time: "5:30 PM", text: "Club Meeting", color: "club" }
-        ],
-        "2026-5-8": [
-            { time: "5:30 PM", text: "Street Fighter Casuals", color: "street" }
+    const specialEvents = {
+        "2026-5-4": [
+            { time: "6:30 PM", text: "Street Fighter Casuals", color: "street" }
         ],
         "2026-5-13": [
             { time: "4:00 PM", text: "Tekken 8 Tournament", color: "tekken" }
         ],
-        "2026-5-15": [
-            { time: "5:30 PM", text: "Club Meeting", color: "club" }
-        ],
-        "2026-5-22": [
-            { time: "5:30 PM", text: "Guilty Gear Night", color: "guilty" }
-        ],
-        "2026-5-29": [
-            { time: "5:30 PM", text: "Club Meeting", color: "club" }
+        "2026-5-26": [
+            { time: "7:00 PM", text: "Guilty Gear Night", color: "guilty" }
         ]
     };
+
+    function getEventsForDate(dateKey, dateObj) {
+        let dayEvents = [];
+
+        if (specialEvents[dateKey]) {
+            dayEvents = dayEvents.concat(specialEvents[dateKey]);
+        }
+
+        if (dateObj.getDay() === 5) {
+            dayEvents.push({ time: "5:30 PM", text: "Club Meeting", color: "club" });
+        }
+
+        return dayEvents;
+    }
+
+    function updateFooterIndicator(dayEvents) {
+        if (!indicatorDot || !indicatorText) {
+            return;
+        }
+
+        if (dayEvents.length === 0) {
+            indicatorDot.className = "fas fa-circle indicator-dot";
+            indicatorText.textContent = "No events";
+        } else if (dayEvents.length === 1) {
+            indicatorDot.className = "fas fa-circle indicator-dot " + dayEvents[0].color;
+            indicatorText.textContent = dayEvents[0].text;
+        } else {
+            indicatorDot.className = "fas fa-circle indicator-dot " + dayEvents[0].color;
+            indicatorText.textContent = dayEvents.length + " events today";
+        }
+    }
 
     function renderCalendar() {
         const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -106,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 1; i <= lastDay.getDate(); i++) {
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
             const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
-            const dayEvents = events[dateKey] || [];
+            const dayEvents = getEventsForDate(dateKey, date);
 
             let dayClass = "day";
 
@@ -175,7 +199,8 @@ document.addEventListener("DOMContentLoaded", function () {
         eventDateEl.textContent = `${dayNames[dateObj.getDay()]}, ${months[dateObj.getMonth()]} ${parts[2]}, ${parts[0]}`;
         eventListEl.innerHTML = "";
 
-        const dayEvents = events[dateStr] || [];
+        const dayEvents = getEventsForDate(dateStr, dateObj);
+        updateFooterIndicator(dayEvents);
 
         if (dayEvents.length > 0) {
             for (let i = 0; i < dayEvents.length; i++) {
