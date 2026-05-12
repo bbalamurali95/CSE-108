@@ -8,7 +8,6 @@
 </head>
 
 <body>
-    <p>Logged in: {{ logged_in }}</p>
     <nav class="navbar">
         <ul>
             <img src="/static/logo.png" class="logo">
@@ -21,7 +20,6 @@
                 <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('login_page') }}">Login</a></li>
-                <li><a href="{{ url_for('signup_page') }}">Sign up</a></li>
             {% endif %}
         </ul>
     </nav>

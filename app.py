@@ -15,6 +15,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
+app.config['JWT_COOKIE_SECURE'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -45,10 +47,10 @@ def index():
         verify_jwt_in_request(optional=True)
         user_id = get_jwt_identity()
         if user_id:
-            user = User.query.get(user_id)
+            user = User.query.get(int(user_id))  # convert back to int
             return render_template("home.html", username=user.username, logged_in=True)
-    except:
-        pass
+    except Exception as e:
+        print("JWT Error:", e)
     return render_template("home.html", logged_in=False)
 
 @app.route("/login")
@@ -106,7 +108,7 @@ def login():
     if not user or bcrypt.check_password_hash(user.hash, data.get("password")) == False:
         return jsonify({"error" : "Invalid username or password"}), 401
     
-    access_token = create_access_token(identity = user.id)
+    access_token = create_access_token(identity = str(user.id))
 
     response = jsonify({"message" : "Login successful"})
     set_access_cookies(response, access_token)
