@@ -285,6 +285,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let dotsHtml = "";
 
+
+            
+
             if (dayEvents.length > 0) {
                 dotsHtml += '<div class="event-dots-container">';
 
