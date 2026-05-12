@@ -229,6 +229,12 @@ function setWinner(matchId, playerId) {
 
     xhttp.onload = function() {
         if (this.status === 200) {
+            try {
+                const data = JSON.parse(this.responseText);
+                if (data.tournament_over) {
+                    alert(data.message);
+                }
+            } catch(e) {}
             window.location.reload();
         } else {
             alert("Error reporting winner.");

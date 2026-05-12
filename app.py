@@ -318,6 +318,20 @@ def report_winner():
     match.winner_id = winner_id
     loser_id = match.player2_id if winner_id == match.player1_id else match.player1_id
 
+    if match.grid_class in ['u-gf', 'u-8-gf']:
+        champion = User.query.get(winner_id)
+        tournament = Tournament.query.get(match.tournament_id)
+
+        if tournament.game == "Guilty Gear":
+            champion.gg_wins += 1
+        elif tournament.game == "Tekken":
+            champion.t8_wins += 1
+        elif tournament.game == "Street Fighter":
+            champion.sf6_wins += 1
+        
+        db.session.commit()
+        return jsonify({"message": f"🏆 Tournament Complete! {champion.username} is the Champion!", "tournament_over": True}), 200
+
     routing = {
         # --- 8-MAN MAPPINGS ---
         'u-8-r1-m1': ('u-8-r2-m1', 'p1', 'l-8-r1-m1', 'p1'),
