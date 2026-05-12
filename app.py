@@ -66,7 +66,6 @@ class Match(db.Model):
     player2 = db.relationship('User', foreign_keys=[player2_id])
 
 def initialize_bracket_slots(tournament_id):
-    # Define the required slots based on your CSS grid classes
     upper_slots = [
         'u-r1-m1', 'u-r1-m2', 'u-r1-m3', 'u-r1-m4', 'u-r1-m5', 'u-r1-m6', 'u-r1-m7', 'u-r1-m8',
         'u-r2-m1', 'u-r2-m2', 'u-r2-m3', 'u-r2-m4',
@@ -93,7 +92,7 @@ def index():
         verify_jwt_in_request(optional=True)
         user_id = get_jwt_identity()
         if user_id:
-            user = User.query.get(int(user_id))  # convert back to int
+            user = User.query.get(int(user_id))
             return render_template("home.html", username=user.username, logged_in=True)
     except Exception as e:
         print("JWT Error:", e)
@@ -149,7 +148,7 @@ def tournament_page():
     return render_template(
         "tournament.html", 
         active_tournament=active_tourney, 
-        all_tournaments=all_tournaments, # <-- Pass the list to HTML
+        all_tournaments=all_tournaments, 
         is_admin=is_admin_flag,
         upper_matches=upper_matches,
         lower_matches=lower_matches,
@@ -278,7 +277,6 @@ def join_tournament():
     if not tournament:
         return jsonify({"error": "Tournament not found"}), 404
     
-    # Add the user to the participant list if they aren't already in it
     if user not in tournament.participants:
         tournament.participants.append(user)
         db.session.commit()
