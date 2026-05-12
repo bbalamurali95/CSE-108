@@ -87,10 +87,20 @@ body {
     animation: welcomeFade 16s infinite;
 }
 
+.home-text{
+     position: relative;
+    z-index: 10;
+    color: white;
+    font-size: 5rem;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+}
+
 @keyframes welcomeFade {
     0% { opacity: 0; transform: translateY(20px); }
-    5%, 20% { opacity: 1; transform: translateY(0); } /* Stays for first 4s */
-    25%, 100% { opacity: 0; } /* Fades out when the first picture hits */
+    5%, 20% { opacity: 1; transform: translateY(0); } 
+    25%, 100% { opacity: 0; } 
 }
 
 .wrapper{
@@ -311,6 +321,8 @@ input::-webkit-credentials-auto-fill-button {
     width: fit-content;
     clip-path: polygon(0% 0, 100% 0, 90% 100%, 0% 100%);
     color: white;
+     
+;
 }
 
 .sf-orange { background: #ff9900; }
@@ -321,10 +333,64 @@ input::-webkit-credentials-auto-fill-button {
     color: white;
     padding: 30px;
     opacity: 0;
-    transition: 0.5s, visibility 0.5s;
-    transition-delay: 0.5s;
+    font-size: 50px;
 }
 
+.game-description {
+    background: rgba(22, 26, 46, 0.9); /* Matches your .game-textbox dark blue */
+    color: white;
+    padding: 20px;
+    font-size: 1.2rem;
+    max-width: 500px;
+    line-height: 1.6;
+    border: 1px solid #ff9d00; 
+}
+
+.game-description.sf {
+    border-color: #ff9900;
+}
+
+.game-description.gg{
+    border-color: #cc0000; 
+}
+
+.game-description.tk {
+    border-color: #ff0066; 
+}
+
+.game-header, .game-textbox, .game-description {
+    opacity: 0;
+}
+
+
+.animate-in {
+    animation: appear 1.5s ease-out forwards;
+}
+
+
+.game-header.animate-in {
+    animation-delay: 0.75s;     
+}
+
+.game-textbox.animate-in {
+    animation-delay: 2s;    
+}
+
+.game-description.animate-in {
+    animation-delay: 2s;   
+}
+
+/* 4. Define the motion */
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 /* Ensures the video fits the box */
 .game-video {
     height: 500px;
@@ -999,6 +1065,11 @@ h2 {
     text-shadow: 0 0 12px #7b00ff;
 }
 
+h3{
+    color: white;
+    font-size: 50px;
+}
+
 p {
     color: #dddddd;
 }
@@ -1134,7 +1205,7 @@ input::-webkit-credentials-auto-fill-button {
     background: #ff0066;
     padding: 10px 30px;
     width: fit-content;
-    clip-path: polygon(50% 0, 100% 0, 90% 100%, 0% 100%);
+    clip-path: polygon(0% 0, 100% 0, 95% 100%, 0% 100%);
     color: white;
 }
 
