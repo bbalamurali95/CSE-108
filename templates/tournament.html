@@ -40,15 +40,24 @@
 
                 <div class="bracket-board">
                     <h3 class="bracket-title">Winners Bracket</h3>
-                    <div class="grid-bracket">
-                        <h4 class="round-label col1-label">Winners R1</h4>
-                        <h4 class="round-label col2-label">Quarter-Finals</h4>
-                        <h4 class="round-label col3-label">Semi-Finals</h4>
-                        <h4 class="round-label col4-label">Winners Final</h4>
-                        <h4 class="round-label col5-label">Grand Final</h4>
+                    
+                    <div class="grid-bracket {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
+                        
+                        {% if upper_matches|length <= 8 %}
+                            <h4 class="round-label col1-label">Quarter-Finals</h4>
+                            <h4 class="round-label col2-label">Semi-Finals</h4>
+                            <h4 class="round-label col3-label">Winners Final</h4>
+                            <h4 class="round-label col4-label">Grand Final</h4>
+                        {% else %}
+                            <h4 class="round-label col1-label">Winners R1</h4>
+                            <h4 class="round-label col2-label">Quarter-Finals</h4>
+                            <h4 class="round-label col3-label">Semi-Finals</h4>
+                            <h4 class="round-label col4-label">Winners Final</h4>
+                            <h4 class="round-label col5-label">Grand Final</h4>
+                        {% endif %}
 
                         {% for match in upper_matches %}
-                            <div class="bracket-match {{ match.grid_class }} {% if match.grid_class == 'u-gf' %}grand-match{% endif %}">
+                            <div class="bracket-match {{ match.grid_class }} {% if 'gf' in match.grid_class %}grand-match{% endif %}">
                                 <div {% if match.winner_id and match.winner_id == match.player1_id %}style="color: gold; font-weight: bold;"{% endif %}>
                                     {% if is_admin and match.player1 and not match.winner_id %}
                                         <span class="admin-clickable" onclick="setWinner({{ match.id }}, {{ match.player1_id }})">
@@ -70,19 +79,28 @@
                             </div>
                         {% endfor %}
 
-                        <div class="champion-box u-champion">
+                        <div class="champion-box u-champion {% if upper_matches|length <= 8 %}eight-champ{% endif %}">
                             <span>🏆 TBD</span>
                         </div>
                     </div>
 
                     <div class="lower-bracket-area">
                         <h3 class="lower-title">Losers Bracket</h3>
-                        <div class="grid-bracket lower-grid">
-                            <h4 class="round-label l-col1-label">Losers R1</h4>
-                            <h4 class="round-label l-col2-label">Losers R2</h4>
-                            <h4 class="round-label l-col3-label">Losers QF</h4>
-                            <h4 class="round-label l-col4-label">Losers SF</h4>
-                            <h4 class="round-label l-col5-label">Losers Final</h4>
+                        
+                        <div class="grid-bracket lower-grid {% if upper_matches|length <= 8 %}eight-man-grid{% endif %}">
+                            
+                            {% if upper_matches|length <= 8 %}
+                                <h4 class="round-label l-col1-label">Losers R1</h4>
+                                <h4 class="round-label l-col2-label">Losers QF</h4>
+                                <h4 class="round-label l-col3-label">Losers SF</h4>
+                                <h4 class="round-label l-col4-label">Losers Final</h4>
+                            {% else %}
+                                <h4 class="round-label l-col1-label">Losers R1</h4>
+                                <h4 class="round-label l-col2-label">Losers R2</h4>
+                                <h4 class="round-label l-col3-label">Losers QF</h4>
+                                <h4 class="round-label l-col4-label">Losers SF</h4>
+                                <h4 class="round-label l-col5-label">Losers Final</h4>
+                            {% endif %}
 
                             {% for match in lower_matches %}
                                 <div class="bracket-match lower-match {{ match.grid_class }}">

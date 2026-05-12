@@ -200,7 +200,7 @@ def logout():
 @app.route("/create_tournament", methods=['POST'])
 @jwt_required()
 def create_tournament():
-    current_user_id = get_jwt_identity()
+    current_user_id = get_jwt_identity()    
     user = User.query.get(current_user_id)
 
     if not user or not user.is_admin:
@@ -215,10 +215,45 @@ def create_tournament():
     db.session.add(new_tourney)
     db.session.commit()
     
-    # After creating the tournament, we need to initialize the match slots
-    initialize_bracket_slots(new_tourney.id)
-    
-    return jsonify({"message": "Local tournament and bracket slots created!"}), 201
+    return jsonify({"message": "Local tournament created! Waiting for players..."}), 403
+
+def build_8_man(tourney_id, players):
+    upper_slots = ['u-8-r1-m1', 'u-8-r1-m2', 'u-8-r1-m3', 'u-8-r1-m4', 'u-8-r2-m1', 'u-8-r2-m2', 'u-8-r3-m1', 'u-8-gf']
+    lower_slots = ['l-8-r1-m1', 'l-8-r1-m2', 'l-8-r2-m1', 'l-8-r2-m2', 'l-8-r3-m1', 'l-8-r4-m1']
+
+    for slot in upper_slots + lower_slots:
+        db.session.add(Match(tournament_id=tourney_id, grid_class=slot))
+    db.session.commit()
+
+    r1_matches = Match.query.filter_by(tournament_id=tourney_id).filter(Match.grid_class.like('u-8-r1-m%')).order_by(Match.grid_class).all()
+    seat_players(r1_matches, players)
+
+def build_16_man(tourney_id, players):
+    upper_slots = [
+        'u-r1-m1', 'u-r1-m2', 'u-r1-m3', 'u-r1-m4', 'u-r1-m5', 'u-r1-m6', 'u-r1-m7', 'u-r1-m8',
+        'u-r2-m1', 'u-r2-m2', 'u-r2-m3', 'u-r2-m4', 'u-r3-m1', 'u-r3-m2', 'u-r4-m1', 'u-gf'
+    ]
+    lower_slots = [
+        'l-r1-m1', 'l-r1-m2', 'l-r1-m3', 'l-r1-m4', 'l-r2-m1', 'l-r2-m2', 'l-r2-m3', 'l-r2-m4',
+        'l-r3-m1', 'l-r3-m2', 'l-r4-m1', 'l-r5-m1'
+    ]
+    for slot in upper_slots + lower_slots:
+        db.session.add(Match(tournament_id=tourney_id, grid_class=slot))
+    db.session.commit()
+
+    r1_matches = Match.query.filter_by(tournament_id=tourney_id).filter(Match.grid_class.like('u-r1-m%')).order_by(Match.grid_class).all()
+    seat_players(r1_matches, players)
+
+def seat_players(r1_matches, players):
+    player_index = 0
+    for match in r1_matches:
+        if player_index < len(players):
+            match.player1_id = players[player_index].id
+            player_index += 1
+        if player_index < len(players):
+            match.player2_id = players[player_index].id
+            player_index += 1
+    db.session.commit()
 
 @app.route("/join_tournament", methods=['POST'])
 @jwt_required()
@@ -250,32 +285,19 @@ def start_tournament():
         return jsonify({"error": "Admin only"}), 403
 
     data = request.get_json()
-    tourney_id = data.get("tournament_id")
-    tournament = Tournament.query.get(tourney_id)
-    
-    # 1. Get and shuffle participants
-    players = tournament.participants
+    tournament = Tournament.query.get(data.get("tournament_id"))
+
+    players = tournament.pariticipants
     random.shuffle(players)
+    num_players = len(players)
 
-    # 2. Find the 8 first-round matches (u-r1-m1 to u-r1-m8)
-    r1_matches = Match.query.filter_by(tournament_id=tourney_id).filter(Match.grid_class.like('u-r1-m%')).order_by(Match.grid_class).all()
+    if num_players <= 8:
+        build_8_man(tournament.id, players)
+    elif num_players <= 16:
+        build_16_man(tournament.id, players)
+    else:
+        return jsonify({"error": "Max 16 players supported currently!"}), 400
 
-    # 3. Seat the players
-    player_index = 0
-    for match in r1_matches:
-        if player_index < len(players):
-            match.player1_id = players[player_index].id
-            player_index += 1
-        if player_index < len(players):
-            match.player2_id = players[player_index].id
-            player_index += 1
-        
-        # 4. Handle "Byes"
-        # If player 2 is empty, player 1 automatically wins
-        if match.player1_id and not match.player2_id:
-            match.winner_id = match.player1_id
-    
-    db.session.commit()
     return jsonify({"message": "Tournament started and players seeded!"}), 200
 
 @app.route("/report_winner", methods=['POST'])
@@ -290,17 +312,26 @@ def report_winner():
     match = Match.query.get(data.get("match_id"))
     winner_id = data.get("winner_id")
     
-    if not match:
-        return jsonify({"error": "Match not found"}), 404
-
-    # 1. Set the winner of the current match
     match.winner_id = winner_id
     loser_id = match.player2_id if winner_id == match.player1_id else match.player1_id
 
-    # 2. Define the Routing Map
-    # format: 'current_grid_class': (winner_next_class, winner_slot, loser_next_class, loser_slot)
     routing = {
-        # Winners Round 1
+        # --- 8-MAN MAPPINGS ---
+        'u-8-r1-m1': ('u-8-r2-m1', 'p1', 'l-8-r1-m1', 'p1'),
+        'u-8-r1-m2': ('u-8-r2-m1', 'p2', 'l-8-r1-m1', 'p2'),
+        'u-8-r1-m3': ('u-8-r2-m2', 'p1', 'l-8-r1-m2', 'p1'),
+        'u-8-r1-m4': ('u-8-r2-m2', 'p2', 'l-8-r1-m2', 'p2'),
+        'u-8-r2-m1': ('u-8-r3-m1', 'p1', 'l-8-r2-m1', 'p1'),
+        'u-8-r2-m2': ('u-8-r3-m1', 'p2', 'l-8-r2-m2', 'p1'),
+        'u-8-r3-m1': ('u-8-gf', 'p1', 'l-8-r4-m1', 'p2'),
+        'l-8-r1-m1': ('l-8-r2-m1', 'p2', None, None),
+        'l-8-r1-m2': ('l-8-r2-m2', 'p2', None, None),
+        'l-8-r2-m1': ('l-8-r3-m1', 'p1', None, None),
+        'l-8-r2-m2': ('l-8-r3-m1', 'p2', None, None),
+        'l-8-r3-m1': ('l-8-r4-m1', 'p1', None, None),
+        'l-8-r4-m1': ('u-8-gf', 'p2', None, None),
+
+        # --- 16-MAN MAPPINGS ---
         'u-r1-m1': ('u-r2-m1', 'p1', 'l-r1-m1', 'p1'),
         'u-r1-m2': ('u-r2-m1', 'p2', 'l-r1-m1', 'p2'),
         'u-r1-m3': ('u-r2-m2', 'p1', 'l-r1-m2', 'p1'),
@@ -309,37 +340,24 @@ def report_winner():
         'u-r1-m6': ('u-r2-m3', 'p2', 'l-r1-m3', 'p2'),
         'u-r1-m7': ('u-r2-m4', 'p1', 'l-r1-m4', 'p1'),
         'u-r1-m8': ('u-r2-m4', 'p2', 'l-r1-m4', 'p2'),
-
-        # Winners Round 2 (Quarter-Finals)
         'u-r2-m1': ('u-r3-m1', 'p1', 'l-r2-m1', 'p1'),
         'u-r2-m2': ('u-r3-m1', 'p2', 'l-r2-m2', 'p1'),
         'u-r2-m3': ('u-r3-m2', 'p1', 'l-r2-m3', 'p1'),
         'u-r2-m4': ('u-r3-m2', 'p2', 'l-r2-m4', 'p1'),
-
-        # Winners Round 3 (Semi-Finals)
         'u-r3-m1': ('u-r4-m1', 'p1', 'l-r4-m1', 'p1'),
         'u-r3-m2': ('u-r4-m1', 'p2', 'l-r5-m1', 'p1'), 
-
-        # Winners Final
         'u-r4-m1': ('u-gf', 'p1', 'l-r5-m1', 'p2'), 
-
-        # LOWER BRACKET (Losers are eliminated, so they get "None")
         'l-r1-m1': ('l-r2-m1', 'p2', None, None),
         'l-r1-m2': ('l-r2-m2', 'p2', None, None),
         'l-r1-m3': ('l-r2-m3', 'p2', None, None),
         'l-r1-m4': ('l-r2-m4', 'p2', None, None),
-
         'l-r2-m1': ('l-r3-m1', 'p1', None, None),
         'l-r2-m2': ('l-r3-m1', 'p2', None, None),
         'l-r2-m3': ('l-r3-m2', 'p1', None, None),
         'l-r2-m4': ('l-r3-m2', 'p2', None, None),
-
         'l-r3-m1': ('l-r4-m1', 'p2', None, None),
         'l-r3-m2': ('l-r5-m1', 'p1', None, None),
-
         'l-r4-m1': ('l-r5-m1', 'p2', None, None),
-        
-        # Losers Final feeds back into Grand Final
         'l-r5-m1': ('u-gf', 'p2', None, None)
     }
 
@@ -347,13 +365,11 @@ def report_winner():
     if route:
         w_class, w_slot, l_class, l_slot = route
         
-        # Advance Winner
         w_next = Match.query.filter_by(tournament_id=match.tournament_id, grid_class=w_class).first()
         if w_next:
             if w_slot == 'p1': w_next.player1_id = winner_id
             else: w_next.player2_id = winner_id
 
-        # Drop Loser to Losers Bracket
         if l_class:
             l_next = Match.query.filter_by(tournament_id=match.tournament_id, grid_class=l_class).first()
             if l_next:
