@@ -4,6 +4,7 @@ function createUser(event) {
     const xhttp = new XMLHttpRequest();
     const username = document.getElementById("usernameBox").value;
     const password = document.getElementById("passwordBox").value;
+
     const body = {"username": username, "password": password};
     xhttp.open("POST", "/register", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
@@ -51,13 +52,82 @@ function createTournament(event) {
     const xhttp = new XMLHttpRequest();
     const tourneyName = document.getElementById("tourneyNameBox").value
     const tourneyUrl = document.getElementById("tourneyUrlBox").value
-    const body = {"name": tourneyName, "url": tourneyUrl};
+    const tourneyGame = document.getElementById("tourneyGameBox").value
+
+    const body = {"name": tourneyName, "url": tourneyUrl, "game": tourneyGame};
     xhttp.open("POST", "/create_tournament", true);
-    xhttp.sendRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify(body));
     xhttp.onload = function() {
-        if (this.status === 201) window.location.reload();
-        else console.error("Failed to create tournament");
+        if (this.status === 201) {
+            window.location.reload();
+        } else {
+            let errorMessage = "An unknown error occured.";
+            try {
+                const data = JSON.parse(this.responseText);
+                if (data.error) {
+                    errorMessage = data.error;
+                }
+            } catch(e) {}
+            console.error(errorMessage);
+            alert(errorMessage);
+        }
+    }
+}
+
+function joinTournament(event) {
+    event.preventDefault();
+    const tourneySelect = document.getElementById("tournamentSelect");
+    const responseMessage = document.getElementById("signupMessage");
+
+    if (tourneySelect.disabled || !tourneySelect.value) {
+        responseMessage.innerText = "Please select a valid tournament first.";
+        responseMessage.style.color = "#ff003c";
+        return;
+    }
+
+    const xhttp = new XMLHttpRequest();
+    const body = {"tournament_id": tourneySelect.value};
+    xhttp.open("POST", "/join_tournament", true)
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(body));
+    xhttp.onload = function() {
+        const data = JSON.parse(this.responseText);
+        if (this.status === 200) {
+            responseMessage.innerText = data.message;
+            responseMessage.style.color = "#00ffcc";
+        } else {
+            responseMessage.innerText = data.error || "Failed to join tournament.";
+            responseMessage.style.color = "#ff003c";
+        }
+    }
+}
+
+function filterTournaments() {
+    const gameSelect = document.getElementById("gameSelect").value;
+    const tourneySelect = document.getElementById("tournamentSelect");
+    
+    tourneySelect.innerHTML = "";
+    
+    if (!gameSelect) {
+        tourneySelect.innerHTML = '<option value="">-- Select a Game First --</option>';
+        tourneySelect.disabled = true;
+        return;
+    }
+
+    const filtered = allTournaments.filter(t => t.game === gameSelect);
+    
+    if (filtered.length === 0) {
+        tourneySelect.innerHTML = '<option value="">No active tournaments for this game</option>';
+        tourneySelect.disabled = true;
+    } else {
+        tourneySelect.disabled = false;
+        filtered.forEach(t => {
+            const option = document.createElement("option");
+            option.value = t.id;
+            option.text = t.name;
+            tourneySelect.appendChild(option);
+        });
     }
 }
 

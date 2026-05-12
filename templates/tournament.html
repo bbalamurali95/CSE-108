@@ -6,19 +6,19 @@
 </head>
 <body onload="showBracket('street')">
     <nav>
-    <div class="logo-container"> 
-        <img src="/static/stick_thing.webp" class="logo" alt="Logo">
-        <h2 class="nav-title">Fighting Game Club</h2>
-    </div>
+        <div class="logo-container"> 
+            <img src="/static/stick_thing.webp" class="logo" alt="Logo">
+            <h2 class="nav-title">Fighting Game Club</h2>
+        </div>
 
-    <ul class="nav-links">
-        <li><a href="{{url_for('index')}}">Home</a></li>
-        <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
-        <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
-        <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-        <li><a href="{{url_for('login_page')}}">Login</a></li>
-    </ul>
-</nav>
+        <ul class="nav-links">
+            <li><a href="{{url_for('index')}}">Home</a></li>
+            <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+            <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+            <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+            <li><a href="{{url_for('login_page')}}">Login</a></li>
+        </ul>
+    </nav>
 
     <main>
         <section class="signup-banner">
@@ -30,19 +30,32 @@
         </section>
 
         <section class="tournament-section">
-            <h1>Tournament Brackets</h1>
-            <p>Select a game to view the tournament bracket.</p>
+            {% if active_tournament %}
+                <h2>{{ active_tournament.name }} ({{active_tournament.game}})</h2>
+                <iframe src="{{ active_tournament.challonge_url}}/module" width="100%" height="600" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+            {% else %}
+                <h2>No Active Tournaments</h2>
+            {% endif %}
 
-            <div class="button-row">
-                <button onclick="showBracket('street')">Street Fighter</button>
-                <button onclick="showBracket('tekken')">Tekken</button>
-                <button onclick="showBracket('guilty')">Guilty Gear</button>
-            </div>
-
-            <section id="bracketArea" class="bracket-area"></section>
+            {% if is_admin %}
+                <hr style="border-color: #ff003c; margin: 40px 0;">
+                <div class="admin-panel" style="background: rgba(255,0,60,0.1); padding: 20px; border: 2px solid #ff003c; border-radius: 12px;">
+                    <h2 style="color: #ff003c;">Admin Controls: Create Tournament</h2>
+                    <form onsubmit="createTournament(event)">
+                        <input type="text" id="tourneyNameBox" placeholder="Name (e.g. Summer Smash)" required>
+                        <input type="text" id="tourneyUrlBox" placeholder="Unique URL (no spaces)" required>
+                        <select id="tourneyGameBox" required>
+                            <option value="Street Fighter">Street Fighter</option>
+                            <option value="Tekken">Tekken</option>
+                            <option value="Guilty Gear">Guilty Gear</option>
+                        </select>
+                        <button type="submit" style="margin-top: 10px;">Create Bracket</button>
+                    </form>
+                </div>
+            {% endif %}
         </section>
     </main>
 
-    <script src="static/scripts.js"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>

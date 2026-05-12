@@ -26,30 +26,33 @@
             <p>Sign up for an upcoming tournament.</p>
 
             <form class="signup-form">
-                <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Enter your username">
-
-                <label for="platform">Platform:</label>
-                <select id="platform">
-                    <option>Steam</option>
-                    <option>PlayStation</option>
-                    <option>Xbox</option>
+                <label for="gameSelect">1. Choose Game:</label>
+                <select id="gameSelect" onchange="filterTournaments()">
+                    <option value="">-- Select a Game --</option>
+                    <option value="Street Fighter">Street Fighter</option>
+                    <option value="Tekken">Tekken</option>
+                    <option value="Guilty Gear">Guilty Gear</option>
                 </select>
 
-                <label for="game">Game:</label>
-                <select id="game">
-                    <option>Street Fighter</option>
-                    <option>Tekken</option>
-                    <option>Guilty Gear</option>
+                <label for="tournamentSelect">2. Choose Tournament:</label>
+                <select id="tournamentSelect" disabled>
+                    <option value="">-- Select a Game First --</option>
                 </select>
 
-                <button type="button" onclick="showSignupMessage()">Sign Up</button>
+                <button type="button" onclick="joinTournament(event)" style="margin-top: 20px;">Join Bracket</button>
             </form>
 
-            <p id="signupMessage" class="signup-message"></p>
+            <p id="signupMessage" class="signup-message" style="margin-top: 15px; font-weight: bold;"></p>
         </section>
     </main>
 
-    <script src="static/scripts.js"></script>
+    <script src="static/script.js"></script>
+    <script>
+        const allTournaments = [
+            {% for t in tournaments %}
+                { id: {{ t.id }}, name: "{{ t.name }}", game: "{{ t.game }}" },
+            {% endfor %}
+        ];
+    </script>
 </body>
 </html>
