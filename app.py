@@ -46,6 +46,7 @@ class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     game = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
     participants = db.relationship('User', secondary=tournament_participants, backref='tournaments')
 
 class Match(db.Model):
@@ -124,35 +125,43 @@ def tournament_page():
         if user and user.is_admin:
             is_admin_flag = True
 
-    latest_tourney = Tournament.query.order_by(Tournament.id.desc()).first()
+    all_tournaments = Tournament.query.all()
+    requested_id = request.args.get('id')
     
-    # Initialize empty lists
+    active_tourney = None
     upper_matches = []
     lower_matches = []
 
-    if latest_tourney:
-        # Fetch all matches for this tournament
-        all_matches = Match.query.filter_by(tournament_id=latest_tourney.id).all()
-        
-        # Split them based on their grid class (e.g. 'u-r1-m1' vs 'l-r1-m1')
-        for match in all_matches:
-            if match.grid_class.startswith('u-'):
-                upper_matches.append(match)
-            elif match.grid_class.startswith('l-'):
-                lower_matches.append(match)
+    champion = None
+
+    if requested_id:
+        active_tourney = Tournament.query.get(requested_id)
+        if active_tourney:
+            all_matches = Match.query.filter_by(tournament_id=active_tourney.id).all()
+            for match in all_matches:
+                if match.grid_class.startswith('u-'):
+                    upper_matches.append(match)
+                    if match.grid_class in ['u-gf', 'u-8-gf'] and match.winner_id:
+                        champion = User.query.get(match.winner_id)
+                elif match.grid_class.startswith('l-'):
+                    lower_matches.append(match)
 
     return render_template(
         "tournament.html", 
-        active_tournament=latest_tourney, 
+        active_tournament=active_tourney, 
+        all_tournaments=all_tournaments, # <-- Pass the list to HTML
         is_admin=is_admin_flag,
         upper_matches=upper_matches,
-        lower_matches=lower_matches
+        lower_matches=lower_matches,
+        champion=champion,
+        logged_in=is_logged_in()
     )
 
 @app.route("/leaderboard")
 def leaderboard_page():
     player_count = User.query.count()
-    return render_template("leaderboard.html", logged_in=is_logged_in(), player_count=player_count)
+    tournament_count = Tournament.query.filter_by(completed=True).count()
+    return render_template("leaderboard.html", logged_in=is_logged_in(), player_count=player_count, tournament_count=tournament_count)
 
 @app.route("/t_register")
 def t_register():
@@ -216,7 +225,7 @@ def create_tournament():
     db.session.add(new_tourney)
     db.session.commit()
     
-    return jsonify({"message": "Local tournament created! Waiting for players..."}), 403
+    return jsonify({"message": "Local tournament created! Waiting for players..."}), 201
 
 def build_8_man(tourney_id, players):
     upper_slots = ['u-8-r1-m1', 'u-8-r1-m2', 'u-8-r1-m3', 'u-8-r1-m4', 'u-8-r2-m1', 'u-8-r2-m2', 'u-8-r3-m1', 'u-8-gf']
@@ -288,7 +297,7 @@ def start_tournament():
     data = request.get_json()
     tournament = Tournament.query.get(data.get("tournament_id"))
 
-    players = tournament.pariticipants
+    players = tournament.participants
     random.shuffle(players)
     num_players = len(players)
 
@@ -315,6 +324,22 @@ def report_winner():
     
     match.winner_id = winner_id
     loser_id = match.player2_id if winner_id == match.player1_id else match.player1_id
+
+    if match.grid_class in ['u-gf', 'u-8-gf']:
+        champion = User.query.get(winner_id)
+        tournament = Tournament.query.get(match.tournament_id)
+
+        if tournament.game == "Guilty Gear":
+            champion.gg_wins += 1
+        elif tournament.game == "Tekken":
+            champion.t8_wins += 1
+        elif tournament.game == "Street Fighter":
+            champion.sf6_wins += 1
+
+        tournament.completed = True 
+        
+        db.session.commit()
+        return jsonify({"message": f"🏆 Tournament Complete! {champion.username} is the Champion!", "tournament_over": True}), 200
 
     routing = {
         # --- 8-MAN MAPPINGS ---
@@ -383,20 +408,22 @@ def report_winner():
 @app.route("/api/leaderboard")
 def leaderboard_api():
     game = request.args.get("game", "Overall")
-    
+
     if game == "Street Fighter":
         users = User.query.order_by(User.sf6_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Street Fighter" for t in u.tournaments)]
     elif game == "Tekken":
         users = User.query.order_by(User.t8_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Tekken" for t in u.tournaments)]
     elif game == "Guilty Gear":
         users = User.query.order_by(User.gg_wins.desc()).all()
+        users = [u for u in users if any(t.game == "Guilty Gear" for t in u.tournaments)]
     else:  # Overall
         users = User.query.all()
         users.sort(key=lambda u: u.sf6_wins + u.t8_wins + u.gg_wins, reverse=True)
 
     result = []
     for user in users:
-        total = user.sf6_wins + user.t8_wins + user.gg_wins
         if game == "Street Fighter":
             wins = user.sf6_wins
         elif game == "Tekken":
@@ -404,10 +431,24 @@ def leaderboard_api():
         elif game == "Guilty Gear":
             wins = user.gg_wins
         else:
-            wins = total
-        result.append({"name": user.username, "wins": wins, "game": game})
+            wins = user.sf6_wins + user.t8_wins + user.gg_wins
+
+        result.append({
+            "name": user.username,
+            "wins": wins,
+            "game": get_main_game(user)
+        })
 
     return jsonify(result)
+
+def get_main_game(user):
+    from collections import Counter
+    game_counts = Counter()
+    for tournament in user.tournaments:
+        game_counts[tournament.game] += 1
+    if not game_counts:
+        return "None"
+    return game_counts.most_common(1)[0][0]
 
 if __name__ == '__main__':
     app.run(debug = True, port = 5000)
