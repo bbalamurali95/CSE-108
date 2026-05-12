@@ -71,8 +71,8 @@ body {
 .slide:nth-child(4) { animation-delay: 12s; }
 
 @keyframes cycleImages {
-    0%, 20% { opacity: 1; }  /* Visible */
-    25%, 100% { opacity: 0; } /* Invisible */
+    0%, 20% { opacity: 1; }  
+    25%, 100% { opacity: 0; } 
 }
 
 /* --- WELCOME TEXT --- */
@@ -212,17 +212,17 @@ input::-webkit-credentials-auto-fill-button {
 }
 */
 .logo {
-    height: 50px;       /* Set the height you want */
-    width: auto;         /* Allow the width to scale naturally */
-    object-fit: contain; /* Ensures the image isn't squished inside its box */
-    display: block;      /* Removes extra bottom spacing */
+    height: 50px;       
+    width: auto;         
+    object-fit: contain; 
+    display: block;     
     /* filter: drop-shadow(0 0 8px #ff003c);  */
 }
 
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 12px; /* Space between logo and FGC text */
+    gap: 12px;
     text-decoration: none;
 }
 
@@ -305,10 +305,10 @@ input::-webkit-credentials-auto-fill-button {
 }
 
 
-/* This sets up the side-by-side look */
+
 .game {
     display: grid;
-    grid-template-columns: 1fr 1.5fr; /* Split screen 50/50 */
+    grid-template-columns: 1fr 1.5fr;
     background: #0a0c1a;
     margin: 40px 0;
     align-items: center;
@@ -337,7 +337,7 @@ input::-webkit-credentials-auto-fill-button {
 }
 
 .game-description {
-    background: rgba(22, 26, 46, 0.9); /* Matches your .game-textbox dark blue */
+    background: rgba(22, 26, 46, 0.9); 
     color: white;
     padding: 20px;
     font-size: 1.2rem;
@@ -358,7 +358,7 @@ input::-webkit-credentials-auto-fill-button {
     border-color: #ff0066; 
 }
 
-/* Ensures the video fits the box */
+
 .game-video {
     height: 500px;
     border: 2px solid #fcf397;
@@ -473,15 +473,12 @@ input::-webkit-credentials-auto-fill-button {
 .container2 .slider {
     position: relative;
     width: 100%;
-    /* Option A: Define a fixed height like your hero */
     height: 500px; 
-    
-    /* Option B: Or force a specific ratio (e.g., 16:9 widescreen) */
     /* aspect-ratio: 16 / 9; */
     
     overflow: hidden;
-    background: #000; /* Black bars if an image fails to load */
-    border-radius: 8px; /* Optional: matches your site's clean aesthetic */
+    background: #000; 
+    border-radius: 8px; 
 }
 
 .game-img-slide {
@@ -489,9 +486,8 @@ input::-webkit-credentials-auto-fill-button {
     inset: 0;
     width: 100%;
     height: 100%;
-    /* Shows the full image, no matter what */
+    
     object-fit: contain; 
-    /* Keeps the background black for the "letterbox" bars */
     background-color: #000; 
     opacity: 0;
     animation: cycleGames 18s infinite;
@@ -504,8 +500,8 @@ input::-webkit-credentials-auto-fill-button {
 
 /* The Fading Logic */
 @keyframes cycleGames {
-    0%, 25% { opacity: 1; }   /* Visible for the first 25% of the 12s */
-    30%, 100% { opacity: 0; }  /* Fades out and stays hidden */
+    0%, 25% { opacity: 1; }   
+    30%, 100% { opacity: 0; }  
 }
 
 .container2{
@@ -561,27 +557,27 @@ input::-webkit-credentials-auto-fill-button {
 
 .game-gallery-row {
     display: flex;
-    flex-direction: row;      /* Force side-by-side layout */
-    align-items: center;      /* Vertically center characters with the box */
-    justify-content: center;  /* Center the group on the page */
-    gap: 20px;                /* Space between characters and slider */
+    flex-direction: row;      
+    align-items: center;     
+    justify-content: center;  
+    gap: 20px;                
     width: 100%;
     margin: 40px auto;
 }
 
 .side-character {
-    width: 350px; /* Increase this number to make them larger */
+    width: 350px; 
     height: auto;
     object-fit: contain;
     flex-shrink: 0;
-    transition: transform 0.3s ease; /* Adds a smooth feel when they move */
+    transition: transform 0.3s ease; 
 }
 .container2 {
-    flex: 0 1 700px;          /* Slider width target */
+    flex: 0 1 700px;          
     position: relative;
 }
 
-/* Ensure the slider uses the 18s animation for 3 images */
+
 .game-img-slide {
     position: absolute;
     inset: 0;
@@ -592,92 +588,6 @@ input::-webkit-credentials-auto-fill-button {
     opacity: 0;
     animation: cycleGames 18s infinite;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 nav {
     background: rgba(28, 27, 27, 0.952);
