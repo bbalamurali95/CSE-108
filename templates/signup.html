@@ -11,18 +11,21 @@
 
 
 <body id = "login-body">
-    <nav class="navbar">
-        <ul>
-            <img src="/static/logo.png" class="logo">
-            <li><a href="{{url_for('index')}}">Home</a></li>
-            <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
-            <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
-            <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
-            <li><a href="{{url_for('chat_page')}}">Chat</a></li>
-            <li><a href="{{url_for('login_page')}}">Login</a></li>
-            <li><a href="{{url_for('signup_page')}}">Sign up</a></li>
-        </ul>
-    </nav>
+    <nav>
+    <div class="logo-container"> 
+        <img src="/static/stick_thing.webp" class="logo" alt="Logo">
+        <h2 class="nav-title">Fighting Game Club</h2>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="{{url_for('index')}}">Home</a></li>
+        <li><a href="{{url_for('calendar_page')}}">Calendar</a></li>
+        <li><a href="{{url_for('tournament_page')}}">Tournaments</a></li>
+        <li><a href="{{url_for('leaderboard_page')}}">Leaderboard</a></li>
+        <li><a href="{{url_for('login_page')}}">Login</a></li>
+        <li><a href="{{url_for('signup_page')}}">Sign up</a></li>
+    </ul>
+</nav>
     
     <div class = "wrapper">
         <form id="signupForm" onsubmit="createUser(event)">
