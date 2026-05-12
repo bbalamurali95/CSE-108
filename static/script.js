@@ -377,7 +377,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     renderCalendar();
-<<<<<<< HEAD
 });
 
 
@@ -409,7 +408,6 @@ function moveSlide(direction) {
         behavior: 'smooth'
     });
 }
-=======
 
     const startingDate = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
     showEvents(startingDate);
